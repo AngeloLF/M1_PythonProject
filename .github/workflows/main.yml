@@ -28,6 +28,7 @@ jobs:
         pip install pandas
         pip install xmltodict
         pip install numpy
+        pip install scipy
     - name: Run tests and generate HTML report
       run: |
         pytest testUnitaires.py
