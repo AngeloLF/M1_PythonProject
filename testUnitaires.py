@@ -3,10 +3,16 @@ import os
 from class_PAP import ScrapingGeneral
 import Document
 import Corpus
+import Author
 import datetime
 
 class TestStringMethods(unittest.TestCase):
 	
+
+	def test_test(self):
+     
+		auteur = Author.Author("angelo pas la débrouille")
+		self.assertEqual("angelo pas la débrouille", auteur.get_name())
 
 	def test_ScrapingGeneral(self):
 		# Tests sur l'instance ScrapingGenerale
@@ -70,6 +76,7 @@ class TestStringMethods(unittest.TestCase):
 		fauxCorp.addDocument(fauxAuteur, fauxDocu)
 
 		fauxCorp.statAuthor('Angelo')
+
 
 
 
