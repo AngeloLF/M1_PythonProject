@@ -15,6 +15,7 @@ from Corpus import *
 
 
 class ScrapingGeneral():
+    
 	"""
 	Class scrapingGeneral, qui va servir à la gestion du scraping, et ceux avec plusieurs sources
 	Pour plus d'information suplémentaire : 
