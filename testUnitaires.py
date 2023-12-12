@@ -1,6 +1,9 @@
 import unittest
 import os
 from class_PAP import ScrapingGeneral
+import Document
+import Corpus
+import datetime
 
 class TestStringMethods(unittest.TestCase):
 	
@@ -33,11 +36,40 @@ class TestStringMethods(unittest.TestCase):
 
 
 
+	def test_Corpus_and_Document(self):
+		# Tests de la classe Documents et Corpus
+
+		fauxAuteur = ['Angelo', 'Clement']
+
+		fauxDocu = Document.RedditDocument(titre='Faux Titre', 
+			auteur=fauxAuteur, 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte='Le faux texte c\'est ici', 
+			nb_comment=999)
+
+		fauxCorp = Corpus.Corpus('FauxCorpus')
+		fauxCorp.addDocument(fauxAuteur, fauxDocu)
+
+		self.assertEqual(list(fauxCorp.get_id2aut().keys()), fauxAuteur)
 
 
-	
+	def test_Corpus_statAuthor(self):
+		# Tests de la classe Documents et Corpus
 
+		fauxAuteur = ['Angelo', 'Clement']
 
+		fauxDocu = Document.RedditDocument(titre='Faux Titre', 
+			auteur=fauxAuteur, 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte='Le faux texte c\'est ici', 
+			nb_comment=999)
+
+		fauxCorp = Corpus.Corpus('FauxCorpus')
+		fauxCorp.addDocument(fauxAuteur, fauxDocu)
+
+		fauxCorp.statAuthor('Angelo')
 
 
 

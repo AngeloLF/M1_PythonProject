@@ -153,7 +153,7 @@ class RedditDocument(Document):
 		self.set_nb_comment(nb_comment)
 
 	def __str__(self):
-		return f"<RedditDocument | {self.__titre}>"
+		return f"<RedditDocument | {self.get_titre()}>"
 
 	# Les getters :
 	get_nb_comment = lambda self : self.__nb_comment
