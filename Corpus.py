@@ -31,7 +31,6 @@ class Corpus():
 		giveDate(self)                : Permet de recuper deux liste : une avec les ids des docs du corpus, et une avec leur date associé. (Utiliser dans la fonction Corpus.show)
 		show(nbShow)                  : Permet d'afficher les nbShow premier document du corpus
 		statsAuthor(authorName)       : Permet d'afficher les stats d'un auteur du corpus (nb de doc ...)
-		stats(n)                      :	Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrent
 	"""
 
 	def __init__(self, nom):
