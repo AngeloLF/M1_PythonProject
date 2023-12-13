@@ -12,6 +12,9 @@ Pour que notre programme s'execute correctement, nous avont besoin des packages 
 * datetime [`pip install DateTime`]
 * xmltodict [`pip install xmltodict`]
 * IPython [`pip install ipython`]
+* numpy [`pip install numpy`]
+* pandas [`pip install pandas`]
+* scipy [`pip install scipy`]
 * Enfin, divers package souvent déjà installer dans python (vérifié et les installer si nécessaire) :
   * `os`, `pickle`, `urllib`, `re`, `unittest`
 
