@@ -6,4 +6,4 @@ from JNWidget import UXCHOICE
 
 def main(sg):
 
-	UXCHOICE(sg)
+	UXCHOICE(sg) 

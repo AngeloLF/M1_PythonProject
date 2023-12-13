@@ -1,9 +1,6 @@
 import urllib, urllib.request
-import pandas as pd
-import numpy as np
 import datetime
 import pickle
-import time
 import praw
 import os
 
@@ -187,6 +184,5 @@ class ScrapingGeneral():
 			with open(f"{self.datafolder}{nom}_corpus.dataPAP", 'rb') as f:
 				self.corpus = pickle.load(f)
 				print(f"INFO : Sucess to charge corpus '{nom}'")
-				time.sleep(1)
 		else:
 			print(f"WARNING : il n'y a pas de {self.datafolder}{nom}_corpus.dataPAP")
