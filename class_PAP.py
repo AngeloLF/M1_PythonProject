@@ -73,10 +73,10 @@ class ScrapingGeneral():
 		"""
 
 		url = self.url0_arxiv + 'search_query=all:{}&start={}&max_results={}'.format(query, nb_start, nb_docs)
+		
+
 		request = urllib.request.urlopen(url).read().decode('utf-8')
 		dic = func_PAP.xmlto(request)
-
-
 		for i in range(min(nb_docs, len(dic['feed']['entry']))):
 			if len(dic['feed']['entry'][i]['summary'].replace('\n', ' ')) > limitCarac:
 				try:

@@ -20,6 +20,7 @@ class Document():
 		__date [datetime.datetime] : date de publication
 		__url [str]                : url source du document
 		__texte [str]              : contenu textuel du document
+		__voca [dict]              : dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurence dans le document (pour les values)
 		__type [str]               : type, plus précise pour les classes filles
 		__size [list]              : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrases>] dans le doc
 
@@ -30,9 +31,11 @@ class Document():
 		get_url()    | set_url(url)
 		get_texte()  | set_texte(texte)
 		get_size()   | *
+		get_voca()   | set_statsMots()
 
 	Methode
 		info()              : Permet d'afficher des infos sur le document
+		nettoyertexte(text) : Permet de nettoyer le texte du document
 	"""
 
 	def __init__(self, titre='', auteur=[], date=None, url='', texte=''):
@@ -90,9 +93,35 @@ class Document():
 	def set_texte(self, enter):
 		if type(enter) == str and len(enter) > 0:
 			self.__texte = enter
+			self.set_statsMots()
 		else:
 			raise "WARNING Document.set_texte : mauvais type"
 
+
+	def set_statsMots(self):
+		aio = self.nettoyerTexte(self.__texte).split(' ')
+		mots, voca = list(set(aio)), {}
+		if '' in mots : 
+			mots.remove('')
+		mots.sort()
+		for m in mots : 
+			voca[m] = aio.count(m)
+		self.__voca = voca
+
+
+	def nettoyerTexte(self, text):
+		"""
+		Permet de nettoyer le texte du document
+
+		Param :
+			text [str] : texte à nettoyer
+
+		Return :
+			[str] : texte nettoyer
+		"""
+		t = re.sub(r'[^\w\s]', '', text.lower().replace('.', ' ').replace('\n', ' '))
+		t = re.sub(r'[\d]', '', t)
+		return t
 
 
 	def info(self):
