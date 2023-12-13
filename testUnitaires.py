@@ -90,7 +90,11 @@ class TestStringMethods(unittest.TestCase):
 		fauxCorp = Corpus.Corpus('FauxCorpus')
 		fauxCorp.addDocument(fauxAuteur, fauxDocu)
 
+		# Tests de la méthode statsAuthor si l'auteur existe
 		fauxCorp.statAuthor('Angelo')
+
+		# Tests de la méthode statsAuthor si l'auteur n'existe pas !
+		fauxCorp.statAuthor('sdfjqsdoghdqspdjqdhdfhsdqdhs')
 
 		# Test de la classe Author et ses méthodes
 		fauxAuteur2 = Author.Author('clement')
