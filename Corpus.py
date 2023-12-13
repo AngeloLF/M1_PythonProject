@@ -40,6 +40,8 @@ class Corpus():
 		search(motif)                 : Permet de chercher les endroits ou il y a la sequence `motif` dans le corpus
 		concorde(motif, contexte)     : Renvoie un DataFrame contenant les passage ou l'on trouve un motif, avec son contexte associé
 		stats(n)                      :	Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrent
+		createMatTF()                 : Methode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
+		makeSearch(enters)            : Methode qui cherche, et affiche, les documents les plus interressant par rapport a l'entrée enters
 	"""
 
 	def __init__(self, nom):
@@ -107,7 +109,7 @@ class Corpus():
 		Utiliser dans la fonction Corpus.show
 
 		Return :
-			[list, list] : liste des id, liste des date
+			- xkeys, xdate [list, list] : liste des id, liste des date
 		"""
 		xkeys = []
 		xdate = []
@@ -125,8 +127,8 @@ class Corpus():
 		Permet d'ajouter un document avec son auteur associer
 
 		Param : 
-			auteur [list] : liste des auteur(s) aillant participer au document
-			document [Document.Document] : document a ajouter au corpus
+			- auteur [list] : liste des auteur(s) aillant participer au document
+			- document [Document.Document] : document a ajouter au corpus
 		"""
 		self.__id2loc[f"id{len(self.__id2loc.keys())}"] = document
 		self.__ndoc += 1
@@ -158,7 +160,7 @@ class Corpus():
 		Permet d'afficher les stats d'un auteur du corpus (nb de doc ...)
 
 		Param :
-			authorName [str] : nom de l'auteur dont l'on veut les stats
+			- authorName [str] : nom de l'auteur dont l'on veut les stats
 		"""
 		if authorName in self.__id2aut.keys():
 			self.__id2aut[authorName].stats()
@@ -172,10 +174,10 @@ class Corpus():
 		Permet de chercher les endroits ou il y a la sequence `motif` dans le corpus
 
 		Param :
-			motif [str] : motif que l'on veut chercher dans le corpus
+			- motif [str] : motif que l'on veut chercher dans le corpus
 
 		Return : 
-			[list] : liste des index ou ce trouve le modif dans le texte
+			- indexSeq [list] : liste des index ou ce trouve le modif dans le texte
 		"""
 		indexSeq = []
 
@@ -191,11 +193,11 @@ class Corpus():
 		Renvoie un DataFrame contenant les passage ou l'on trouve un motif, avec son contexte associé
 
 		Param :
-			motif [str]    : motif que l'on veut chercher dans le corpus
-			contexte [int] : nombre de caractère que l'on souhaite pour le contexte
+			- motif [str]    : motif que l'on veut chercher dans le corpus
+			- contexte [int] : nombre de caractère que l'on souhaite pour le contexte
 
 		Return :
-			[pandas.DataFrame] : DataFrame contenant les contexte gauche et droite aussi que le motif
+			- df [pandas.DataFrame] : DataFrame contenant les contexte gauche et droite aussi que le motif
 		"""
 		dico = {'contexte gauche':[], 'motif':[], 'contexte droit':[]}
 		k = len(motif)
@@ -216,7 +218,7 @@ class Corpus():
 		Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrent
 
 		Param :
-			n [int] : voir les n mots les plus récurrent
+			- n [int] : voir les n mots les plus récurrent
 		"""
 		print(f"\nSTATS sur le corpus {self.__nom} [{self.__ndoc} docs.]")
 		print(f"\tNombre de mots differents : {len(list(self.__vocadf['mot']))}")
@@ -232,6 +234,12 @@ class Corpus():
 
 
 	def createMatTF(self):
+		"""
+		Methode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
+
+		Return:
+			- mat_TFxIDF [scipy.sparse.lil_matrix] : Matrice TFxIDF calculer
+		"""
 
 		ndoc = self.__ndoc
 		nmot = len(self.__vocadf['mot'])
@@ -240,6 +248,8 @@ class Corpus():
 		mots.sort()
 
 		mat_TFxIDF = sparse.lil_matrix((ndoc, nmot)).astype(float)
+
+		print(type(mat_TFxIDF))
 		
 		for iddoc, val in self.__id2loc.items():
 			nbmot = len(val.get_voca().keys())
@@ -253,6 +263,12 @@ class Corpus():
 
 
 	def makeSearch(self, enters):
+		"""
+		Methode qui cherche, et affiche, les documents les plus interressant par rapport a l'entrée enters
+
+		Param :
+			- enters [str] : mots pour la recherche de documents
+		"""
 
 		ndoc = self.__ndoc
 		nmot = len(self.__vocadf['mot'])
