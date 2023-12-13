@@ -3,10 +3,16 @@ import os
 from class_PAP import ScrapingGeneral
 import Document
 import Corpus
+import Author
 import datetime
 
 class TestStringMethods(unittest.TestCase):
 	
+
+	def test_auteur(self):
+     
+		auteur = Author.Author("angelo")
+		self.assertEqual("angelo", auteur.get_name())
 
 	def test_ScrapingGeneral(self):
 		# Tests sur l'instance ScrapingGenerale
@@ -37,7 +43,7 @@ class TestStringMethods(unittest.TestCase):
 
 
 	def test_Corpus_and_Document(self):
-		# Tests de la classe Documents et Corpus
+		# Tests de la classe RedditDocument et Corpus
 
 		fauxAuteur = ['Angelo', 'Clement']
 
@@ -47,15 +53,35 @@ class TestStringMethods(unittest.TestCase):
 			url='Non.com', 
 			texte='Le faux texte c\'est ici', 
 			nb_comment=999)
-
+  
 		fauxCorp = Corpus.Corpus('FauxCorpus')
 		fauxCorp.addDocument(fauxAuteur, fauxDocu)
 
 		self.assertEqual(list(fauxCorp.get_id2aut().keys()), fauxAuteur)
+  
+		# Tests des méthodes dans Document
+  
+		self.assertEqual(fauxDocu.get_titre(), 'Faux Titre')
+		self.assertEqual(fauxDocu.get_auteur(), fauxAuteur)
+
+		self.assertIn('RedditDocument', fauxDocu.__str__())
+		fauxDocu.info()
+		fauxDocu.set_date(datetime.datetime.now())
+
+		# Test de la classe ArxivDocument
+		fauxDocu2 = Document.ArxivDocument(titre='Faux Titre2', 
+			auteur=fauxAuteur, 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte='Le faux texte c\'est ici', 
+			category='physics')
+  
+		self.assertEqual(fauxDocu2.get_titre(), 'Faux Titre2')
+		self.assertEqual(fauxDocu2.get_category(), 'physics')
 
 
 	def test_Corpus_statAuthor(self):
-		# Tests de la classe Documents et Corpus
+		# Tests de la classe Documents et Authors
 
 		fauxAuteur = ['Angelo', 'Clement']
 
@@ -66,10 +92,23 @@ class TestStringMethods(unittest.TestCase):
 			texte='Le faux texte c\'est ici', 
 			nb_comment=999)
 
+		# Test de Corpus et ses méthodes
 		fauxCorp = Corpus.Corpus('FauxCorpus')
 		fauxCorp.addDocument(fauxAuteur, fauxDocu)
 
 		fauxCorp.statAuthor('Angelo')
+
+		# Test de la classe Author et ses méthodes
+		fauxAuteur2 = Author.Author('clement')
+
+		self.assertEqual(fauxAuteur2.get_name(), 'clement')
+		fauxAuteur2.add(fauxDocu)
+		fauxAuteur2.stats()
+
+		fauxAuteur2.set_name('angelo')
+		self.assertEqual(fauxAuteur2.get_name(), 'angelo')
+
+
 
 
 

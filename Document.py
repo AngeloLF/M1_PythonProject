@@ -5,14 +5,14 @@ import re
 
 class Document():
 	"""
-	Classe servant a contenir les meta donnee d'un document
+	Classe servant a contenir les métadonnée d'un document
 
 	Param init :
-		titre [str]              : titre du document (def '', pas conseiller)
+		titre [str]              : titre du document (def '', pas conseillé)
 		auteur [list]            : auteurs du document (def [])
 		date [datetime.datetime] : date de publication (def: None)
 		url [str]                : url source du document (def: '')
-		texte [str]              : contenu textuel du document (def: '', pas conseiller)
+		texte [str]              : contenu textuel du document (def: '', pas conseillé)
 
 	Attribut :
 		__titre [str]              : titre du document
@@ -21,7 +21,7 @@ class Document():
 		__url [str]                : url source du document
 		__texte [str]              : contenu textuel du document
 		__type [str]               : type, plus précise pour les classes filles
-		__size [list]              : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
+		__size [list]              : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrases>] dans le doc
 
 	Getters | Setters :
 		get_titre()  | set_titre(titre)
