@@ -1,8 +1,9 @@
 # README 
 
-## M1 Python Project
+## M1 Python Avancé Project (PAP)
 
 Projet python pour le premier semestre de M1 Informatique Lyon 2 pour l'UE de Python Avancé.
+* Pour ouvrir le programme, utiliser l'interface jupyter `M1Info_PAPJUP.ipynb` (executer juste la première et seul cellule, et laissez-vous guider)
 
 ## Package nécessaire
 

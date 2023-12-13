@@ -65,8 +65,6 @@ class Document():
 		return self.__url
 	def get_texte(self): 
 		return self.__texte
-	def get_voca(self):
-		return self.__voca
 	def get_size(self): 
 		return self.__size
 	# Les setters :
@@ -158,7 +156,6 @@ class RedditDocument(Document):
 		__date [datetime.datetime] : (heritage Document) date de publication
 		__url [str]                : (heritage Document) url source du document
 		__texte [str]              : (heritage Document) contenu textuel du document
-		__voca [dict]              : (heritage Document) dictionnaire qui associe les moyts du texte (qui sont les keys) avec les occurence dans le document (pour les values)
 		__type [str]               : (heritage Document) type du document (source)
 		__size [list]              : (heritage Document) liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
 		__nb_comment [int]         : nombre de commentaire du document (ici de l'article Reddit plus precisement)
@@ -170,7 +167,6 @@ class RedditDocument(Document):
 		get_url()        | set_url(url)               (heritage Document)
 		get_texte()      | set_texte(texte)           (heritage Document)
 		get_size()       | *                          (heritage Document)
-		get_voca()       | set_statsMots()            (heritage Document)
 		get_nb_comment() | set_nb_comment(nb_comment)
 		get_type()       | *
 
@@ -232,13 +228,12 @@ class ArxivDocument(Document):
 		texte [str]              : (heritage Document) contenu textuel du document (def: '', pas conseiller)
 		category [str]           : categorie du document, renseignement directement par l'API d'Arxiv (def: '')
 
-	Attribut :
+	Attributs :
 		__titre [str]              : (heritage Document) titre du document
 		__auteur [list]            : (heritage Document) auteurs du document
 		__date [datetime.datetime] : (heritage Document) date de publication
 		__url [str]                : (heritage Document) url source du document
 		__texte [str]              : (heritage Document) contenu textuel du document
-		__voca [dict]              : (heritage Document) dictionnaire qui associe les moyts du texte (qui sont les keys) avec les occurence dans le document (pour les values)
 		__size [list]              : (heritage Document) liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
 		__category [str]           : categorie du document, renseignement directement par l'API d'Arxiv (def: '')
 
@@ -249,7 +244,6 @@ class ArxivDocument(Document):
 		get_url()      | set_url(url)           (heritage Document)
 		get_texte()    | set_texte(texte)       (heritage Document)
 		get_size()     | *                      (heritage Document)
-		get_voca()     | set_statsMots()        (heritage Document)
 		get_category() | set_category(category)
 		get_type()     | *
 
