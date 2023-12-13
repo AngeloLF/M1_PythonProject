@@ -7,12 +7,6 @@ import Author
 import datetime
 
 class TestStringMethods(unittest.TestCase):
-	
-
-	def test_auteur(self):
-     
-		auteur = Author.Author("angelo")
-		self.assertEqual("angelo", auteur.get_name())
 
 	def test_ScrapingGeneral(self):
 		# Tests sur l'instance ScrapingGenerale
@@ -109,8 +103,10 @@ class TestStringMethods(unittest.TestCase):
 		self.assertEqual(fauxAuteur2.get_name(), 'angelo')
 
 
-
-
+	def test_auteur(self):
+     
+		auteur = Author.Author("angelo")
+		self.assertEqual("angelo", auteur.get_name())
 
 
 if __name__ == '__main__':
