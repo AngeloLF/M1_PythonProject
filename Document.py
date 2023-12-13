@@ -43,10 +43,13 @@ class Document():
 		self.set_texte(texte)
 
 		self.__type = "Document"
-		self.__size = [len(texte), len(texte.split(" ")), len(texte.split("."))] #caractere, word, phrase
+		self.__size = [len(texte), len(texte.split(" ")), len(texte.split("."))] #caractere, mots, phrase
 
 	def __str__(self):
-		return f"<Document | {self.__titre}>"
+		return f"<Document | {self.get_titre()} | Auteur : {self.get_auteur()}>"
+
+	def __repr__(self):
+		return f"<Document | {self.get_titre()} | Auteur : {self.get_auteur()}>"
 
 	# Les getters :
 	def get_titre(self): 
@@ -153,7 +156,10 @@ class RedditDocument(Document):
 		self.set_nb_comment(nb_comment)
 
 	def __str__(self):
-		return f"<RedditDocument | {self.get_titre()}>"
+		return f"<RedditDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
+
+	def __repr__(self):
+		return f"<RedditDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
 
 	# Les getters :
 	get_nb_comment = lambda self : self.__nb_comment
@@ -229,7 +235,10 @@ class ArxivDocument(Document):
 		self.set_category(category)
 
 	def __str__(self):
-		return f"<ArxivDocument | {self.__titre}>"
+		return f"<ArxivDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
+
+	def __repr__(self):
+		return f"<ArxivDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
 
 	# Les getters :
 	get_category = lambda self : self.__category

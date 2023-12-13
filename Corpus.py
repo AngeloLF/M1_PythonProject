@@ -44,10 +44,10 @@ class Corpus():
 
 
 	def __str__(self):
-		return f"<Corpus | {self.__nom}>"
+		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
 
-	def __repr__(self, nbShow=20):
-		return ''
+	def __repr__(self):
+		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
 
 	# Les getters :
 	get_nom = lambda self : self.__nom
@@ -66,6 +66,13 @@ class Corpus():
 
 
 	def show(self, nbShow, reverse=False):
+		"""
+		Permet d'afficher les nbShow premier document du corpus (trier par date croissante)
+		
+		Param : 
+			- nbShow [int]   : Nombre de document à afficher
+			- reverse [bool] : True pour afficher trier par date decroissante
+		"""
 		print(f"---- Corpus {self.__nom} [{self.__ndoc} docs. | {self.__naut} auth.] :")
 		print(f"- {nbShow} premier document, trier par date : \n")
 

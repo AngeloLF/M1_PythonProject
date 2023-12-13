@@ -32,7 +32,7 @@ class Author():
 		self.__size = [0, 0, 0]
 	
 	def __str__(self):
-		return f"<Author | {self.__name} | Nombre de document : {self.__ndoc}>" ### NOTE 0x413$Mod
+		return f"<Author | {self.__name} | Nombre de document : {self.__ndoc}>"
 
 
 
@@ -57,7 +57,7 @@ class Author():
 		Param :
 			document [Document.Document] : Document à ajouter dans la liste des document
 		"""
-		if document.get_titre() not in self.__production.keys(): ### NOTE 0x413$Mod
+		if document.get_titre() not in self.__production.keys():
 			self.__ndoc += 1
 			self.__size[0] += document.get_size()[0]
 			self.__size[1] += document.get_size()[1]
