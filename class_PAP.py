@@ -61,6 +61,18 @@ class ScrapingGeneral():
 
 
 
+	def factoryDocument(self, doctype, **kwargs):
+
+		if doctype == 'Reddit':
+			return RedditDocument(**kwargs)
+
+		elif doctype == 'Arxiv':
+			return ArxivDocument(**kwargs)
+
+		else:
+			raise 'factoryError'
+
+
 	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
 		"""
 		Permet de scrap des articles de arxiv et les returner
@@ -100,7 +112,7 @@ class ScrapingGeneral():
 					texte = dic['feed']['entry'][i]['summary'].replace('\n', ' ')
 					category = dic['feed']['entry'][i]['arxiv:primary_category']['@term']
 
-					docu = ArxivDocument(texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
+					docu = self.factoryDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
 					self.corpus.addDocument(auteur, docu)
 
 		else:
@@ -132,7 +144,7 @@ class ScrapingGeneral():
 				titre = post.title
 				texte = post.selftext.replace('\n', ' ')
 				nb_comment = post.num_comments
-				docu = RedditDocument(texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
+				docu = self.factoryDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
 				self.corpus.addDocument(auteur, docu)
 
 

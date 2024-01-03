@@ -60,7 +60,6 @@ class Corpus():
 		self.__allInOne = ''
 		self.__vocadf = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]})
 
-
 	def __str__(self):
 		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
 
