@@ -5,7 +5,7 @@ import re
 
 class Document():
 	"""
-	Classe servant a contenir les métadonnée d'un document
+	Classe servant a contenir les métadonnées d'un document
 
 	Param init :
 		titre [str]              : titre du document (def '', pas conseillé)
@@ -222,7 +222,7 @@ class RedditDocument(Document):
 
 class ArxivDocument(Document):
 	"""
-	ArxivDocument heriter de Document. Permet d'ajouter des attributs unique d'Arxiv.
+	ArxivDocument heriter de Document. Permet d'ajouter des attributs uniques d'Arxiv.
 
 	Param init :
 		titre [str]              : (heritage Document) titre du document (def '', pas conseiller)
@@ -238,8 +238,8 @@ class ArxivDocument(Document):
 		__date [datetime.datetime] : (heritage Document) date de publication
 		__url [str]                : (heritage Document) url source du document
 		__texte [str]              : (heritage Document) contenu textuel du document
-		__voca [dict]              : (heritage Document) dictionnaire qui associe les moyts du texte (qui sont les keys) avec les occurence dans le document (pour les values)
-		__size [list]              : (heritage Document) liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
+		__voca [dict]              : (heritage Document) dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
+		__size [list]              : (heritage Document) liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
 		__category [str]           : categorie du document, renseignement directement par l'API d'Arxiv (def: '')
 
 	Getters | Setters :

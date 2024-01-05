@@ -5,31 +5,32 @@ import Document
 import Corpus
 import Author
 import datetime
+import pandas
 
 class TestStringMethods(unittest.TestCase):
 
 	def test_ScrapingGeneral(self):
 		# Tests sur l'instance ScrapingGenerale
-		
+  
 		sg = ScrapingGeneral()
-		# Test : Est-ce que la création de l'instance à fonctionner et est-ce que l'attribut corpus a bien été initialisée à None
+		# Test : Est-ce que la création de l'instance a fonctionné et est-ce que l'attribut corpus a bien été initialisé à None
 		self.assertTrue(sg.corpus is None)
 
 		sg.scrap('python', arxiv=20, reddit=20)
-		# Test : Scrap d'arxiv et reddit : on regarde si le nombre de document du corpus n'est plus nul
+		# Test : Scrap d'arxiv et reddit : on regarde si le nombre de documents du corpus n'est plus nul
 		self.assertTrue(sg.corpus.get_ndoc() > 0)
 
-		# Si l'on a deja un corpus avec cette query de save, on la suprimme
+		# Si l'on a déjà un corpus avec cette query de save, on la supprime
 		if f"{sg.corpus.get_nom()}_corpus.dataPAP" in os.listdir(sg.datafolder):
 			os.remove(f"{sg.datafolder}{sg.corpus.get_nom()}_corpus.dataPAP")
 
-		# Test du save du corpus :
+		# Test du save de corpus :
 		sg.save()
 		self.assertIn(f"{sg.corpus.get_nom()}_corpus.dataPAP", os.listdir(sg.datafolder))
 
 		sg2 = ScrapingGeneral()
 		sg2.charged('python')
-		# Test : On verifie que les données sont charger correctement
+		# Test : On verifie que les données sont chargées correctement
 		self.assertTrue(sg2.corpus is not None)
 
 		os.remove(f"{sg.datafolder}{sg.corpus.get_nom()}_corpus.dataPAP")
@@ -37,7 +38,7 @@ class TestStringMethods(unittest.TestCase):
 
 
 	def test_Corpus_and_Document(self):
-		# Tests de la classe RedditDocument et Corpus
+		# Tests des classes RedditDocument, ArxivDocument et Corpus
 
 		fauxAuteur = ['Angelo', 'Clement']
 
@@ -62,7 +63,7 @@ class TestStringMethods(unittest.TestCase):
 		fauxDocu.info()
 		fauxDocu.set_date(datetime.datetime.now())
 
-		# Test de la classe ArxivDocument
+		# Tests de la classe ArxivDocument
 		fauxDocu2 = Document.ArxivDocument(titre='Faux Titre2', 
 			auteur=fauxAuteur, 
 			date=datetime.datetime.now(), 
@@ -75,7 +76,7 @@ class TestStringMethods(unittest.TestCase):
 
 
 	def test_Corpus_statAuthor(self):
-		# Tests de la classe Documents et Authors
+		# Tests des classe Documents et Authors
 
 		fauxAuteur = ['Angelo', 'Clement']
 
@@ -90,13 +91,13 @@ class TestStringMethods(unittest.TestCase):
 		fauxCorp = Corpus.Corpus('FauxCorpus')
 		fauxCorp.addDocument(fauxAuteur, fauxDocu)
 
-		# Tests de la méthode statsAuthor si l'auteur existe
+		# Test de la méthode statsAuthor si l'auteur existe
 		fauxCorp.statAuthor('Angelo')
 
-		# Tests de la méthode statsAuthor si l'auteur n'existe pas !
+		# Test de la méthode statsAuthor si l'auteur n'existe pas !
 		fauxCorp.statAuthor('sdfjqsdoghdqspdjqdhdfhsdqdhs')
 
-		# Test de la classe Author et ses méthodes
+		# Tests de la classe Author et ses méthodes
 		fauxAuteur2 = Author.Author('clement')
 
 		self.assertEqual(fauxAuteur2.get_name(), 'clement')
@@ -111,7 +112,49 @@ class TestStringMethods(unittest.TestCase):
      
 		auteur = Author.Author("angelo")
 		self.assertEqual("angelo", auteur.get_name())
+  
+	def test_corpus_method(self):
+		# Tests des méthodes de Corpus ajoutées à la version 2 du projet
+  
+		# Création de documents et d'auteurs fictifs
+		fauxAuteur2 = [['Angelo', 'Clement'], ['Angelo'], ['Celian']]
 
+		fauxDocu3 = Document.RedditDocument(titre='Intelligence artifielle par gpt 1', 
+			auteur=fauxAuteur2[2], 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte="L'intelligence artificielle (IA) a émergé comme une force transformative, redéfinissant la manière dont nous interagissons avec la technologie et percevons le monde qui nous entoure. Dotée de capacités d'apprentissage et d'analyse exceptionnelles, l'IA permet des avancées spectaculaires dans des domaines tels que la médecine, la finance, et la recherche scientifique. Cependant, son ascension rapide soulève également des questions éthiques et sociétales cruciales, notamment sur la confidentialité des données, la prise de décision automatisée et les implications sur l'emploi. En naviguant dans cette ère d'intelligence artificielle, la société est confrontée au défi de trouver un équilibre entre l'exploitation de son potentiel et la mise en place de garde-fous pour préserver nos valeurs fondamentales", 
+			nb_comment=999)
+  
+		fauxDocu4 = Document.ArxivDocument(titre='Intelligence artifielle par gpt 2', 
+			auteur=fauxAuteur2[1], 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+   			texte="Dans le sillage de l'IA, émerge un paysage technologique en constante évolution qui façonne notre quotidien de manière insoupçonnée. Des assistants virtuels aux algorithmes de recommandation personnalisée, l'IA a infiltré notre vie quotidienne, simplifiant des tâches jadis complexes et augmentant notre productivité. Cependant, en parallèle, elle suscite des débats sur les implications à long terme de son développement. Les chercheurs, les décideurs et la société dans son ensemble se trouvent à la croisée des chemins, devant concilier l'innovation technologique avec la préservation de l'éthique et des droits humains. Ainsi, la trajectoire de l'intelligence artificielle devient un véritable enjeu sociétal, appelant à une réflexion approfondie sur la manière dont nous souhaitons façonner notre avenir avec cette puissante force technologique",
+			category='IA')
+
+		corpus = Corpus.Corpus("test corpus")
+		corpus.addDocument(document=fauxDocu3, auteur=fauxAuteur2[2])
+		corpus.addDocument(document=fauxDocu4, auteur=fauxAuteur2[1])
+  
+		# Méthode search
+		print(corpus.search(motif='société'))
+		self.assertEqual(3, len(corpus.search('technologique'))) # il y a bien 3 fois le mot technologie dans l'ensemble du corpus
+
+		# Méthode concorde
+		print(corpus.concorde(motif='société', contexte=20))
+		self.assertTrue(isinstance(corpus.concorde(motif='société', contexte=20), pandas.DataFrame)) # le retour est bien un dataframe
+
+		# Méthode stats
+		print(corpus.stats(n=5, display=False)) # test de l'affichage de la méthode stats
+		# faire un test
+  
+		# Méthode createMatTF
+		print(corpus.createMatTF()) # affichage de la matrice TFxIDF
+		# faire un test
+  
+		# Méthode makesearch()
+		corpus.makeSearch(enters='la')
 
 if __name__ == '__main__':
 	unittest.main()
