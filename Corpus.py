@@ -254,8 +254,6 @@ class Corpus():
 		mots.sort()
 
 		mat_TFxIDF = sparse.lil_matrix((ndoc, nmot)).astype(float)
-
-		print(type(mat_TFxIDF))
 		
 		for iddoc, val in self.__id2loc.items():
 			nbmot = len(val.get_voca().keys())
