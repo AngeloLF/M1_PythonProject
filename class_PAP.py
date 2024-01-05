@@ -75,11 +75,11 @@ class ScrapingGeneral():
 
 	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
 		"""
-		Permet de scrap des articles de arxiv et les returner
+		Permet de scrap des articles de arxiv et les retourner
 
 		Param :
-			query [str]      : theme de la recherche
-			nb_docs [int]    : nombre de document arxiv voulu
+			query [str]      : thème de la recherche
+			nb_docs [int]    : nombre de documents arxiv voulus
 			nb_start [int]   : on va scrap et prendre les texts a partir de nb_start article (0 par def)
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
 		"""

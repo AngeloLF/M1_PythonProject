@@ -15,19 +15,19 @@ import re
 # @singleton
 class Corpus():
 	"""
-	Classe corpus, qui contient beacoup de meta-donnee
+	Classe corpus, qui contient beaucoup de métadonnées
 
 	Param init :
-		nom [str] : Nom du corpus, d'usage on y mettra la query utiliser pour les documents dudit corpus
+		nom [str] : Nom du corpus, d'usage on y mettra la query utilisée pour les documents dudit corpus
 
-	Attribut :
+	Attributs :
 		__nom [str]                 : nom du corpus
 		__id2aut [dict]             : dictionnaire des auteurs  
 		__id2loc [dict]             : dictionnaire des documents
 		__ndoc [int]                : nombre de documents
 		__naut [int]                : nombre d'auteurs
-		__allInOne [str]            : string contenant TOUT le contenu des document du corpus
-		__vocadf [pandas.DataFrame] : DataFrame contenant trois colonne : les mots associé avec leurs occurences dans le corpus (terFreq) et au nombre de doc ou ils sont present (docFreq)
+		__allInOne [str]            : string contenant TOUT le contenu des documents du corpus
+		__vocadf [pandas.DataFrame] : DataFrame contenant trois colonnes : les mots associés avec leurs occurrences dans le corpus (terFreq) et au nombre de doc ou ils sont presents (docFreq)
 
 
 	Getters | Setters :
@@ -39,16 +39,16 @@ class Corpus():
 		get_allInOne() | *
 		get_vocadf()   | *
 
-	Method :
-		addDocument(auteur, document) : Permet d'ajouter un document avec son auteur associer
-		giveDate(self)                : Permet de recuper deux liste : une avec les ids des docs du corpus, et une avec leur date associé. (Utiliser dans la fonction Corpus.show)
-		show(nbShow)                  : Permet d'afficher les nbShow premier document du corpus
-		statsAuthor(authorName)       : Permet d'afficher les stats d'un auteur du corpus (nb de doc ...)
-		search(motif)                 : Permet de chercher les endroits ou il y a la sequence `motif` dans le corpus
-		concorde(motif, contexte)     : Renvoie un DataFrame contenant les passage ou l'on trouve un motif, avec son contexte associé
-		stats(n)                      :	Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrent
+	Methods :
+		addDocument(auteur, document) : Permet d'ajouter un document avec son auteur associé
+		giveDate(self)                : Permet de recuperer deux listes : une avec les ids des docs du corpus, et une avec leurs dates associées. (Utiliser dans la fonction Corpus.show)
+		show(nbShow)                  : Permet d'afficher les nbShow premier(s) document(s) du corpus
+		statsAuthor(authorName)       : Permet d'afficher les stats d'un auteur du corpus (nb de docs...)
+		search(motif)                 : Permet de chercher les endroits où il y a la sequence `motif` dans le corpus
+		concorde(motif, contexte)     : Renvoie un DataFrame contenant les passages ou l'on trouve un motif, avec son contexte associé
+		stats(n)                      :	Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrents
 		createMatTF()                 : Methode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
-		makeSearch(enters)            : Methode qui cherche, et affiche, les documents les plus interressant par rapport a l'entrée enters
+		makeSearch(enters)            : Methode qui cherche, et affiche, les documents les plus interressants par rapport a l'entrée enters
 	"""
 
 	def __init__(self, nom):
@@ -61,10 +61,10 @@ class Corpus():
 		self.__vocadf = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]})
 
 	def __str__(self):
-		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
+		return f"<Corpus {self.get_nom()} | Nb Document(s) : {self.get_ndoc()} | Nb Auteur(s) : {self.get_naut()}>"
 
 	def __repr__(self):
-		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
+		return f"<Corpus {self.get_nom()} | Nb Documents(s) : {self.get_ndoc()} | Nb Auteur(s) : {self.get_naut()}>"
 
 	# Les getters :
 	get_nom = lambda self : self.__nom
@@ -85,14 +85,14 @@ class Corpus():
 
 	def show(self, nbShow, reverse=False):
 		"""
-		Permet d'afficher les nbShow premier document du corpus (trier par date croissante)
+		Permet d'afficher le(s) nbShow premier(s) document(s) du corpus (trier par date croissante)
 		
 		Param : 
-			- nbShow [int]   : Nombre de document à afficher
-			- reverse [bool] : True pour afficher trier par date decroissante
+			- nbShow [int]   : Nombre de document(s) à afficher
+			- reverse [bool] : True pour afficher, trier par date decroissante
 		"""
 		print(f"---- Corpus {self.__nom} [{self.__ndoc} docs. | {self.__naut} auth.] :")
-		print(f"- {nbShow} premier document, trier par date : \n")
+		print(f"- {nbShow} premier document, triés par date : \n")
 
 		if reverse:
 			funcm = max
@@ -111,11 +111,11 @@ class Corpus():
 
 	def giveDate(self):
 		"""
-		Permet de recuper deux liste : une avec les ids des docs du corpus, et une avec leur date associé.
+		Permet de recuperer deux listes : une avec les ids des docs du corpus, et une avec leurs dates associées.
 		Utiliser dans la fonction Corpus.show
 
 		Return :
-			- xkeys, xdate [list, list] : liste des id, liste des date
+			- xkeys, xdate [list, list] : liste des ids, liste des dates
 		"""
 		xkeys = []
 		xdate = []
@@ -130,11 +130,11 @@ class Corpus():
 
 	def addDocument(self, auteur, document):
 		"""
-		Permet d'ajouter un document avec son auteur associer
+		Permet d'ajouter un document avec son auteur associé
 
 		Param : 
-			- auteur [list] : liste des auteur(s) aillant participer au document
-			- document [Document.Document] : document a ajouter au corpus
+			- auteur [list] : liste de(s) auteur(s) aillant participer au document
+			- document [Document.Document] : document à ajouter au corpus
 		"""
 		self.__id2loc[f"id{len(self.__id2loc.keys())}"] = document
 		self.__ndoc += 1
@@ -163,10 +163,10 @@ class Corpus():
 
 	def statAuthor(self, authorName):
 		"""	
-		Permet d'afficher les stats d'un auteur du corpus (nb de doc ...)
+		Permet d'afficher les stats d'un auteur du corpus (nb de docs...)
 
 		Param :
-			- authorName [str] : nom de l'auteur dont l'on veut les stats
+			- authorName [str] : nom de l'auteur afin d'obtenir ses stats
 		"""
 		if authorName in self.__id2aut.keys():
 			self.__id2aut[authorName].stats()
@@ -180,10 +180,10 @@ class Corpus():
 		Permet de chercher les endroits ou il y a la sequence `motif` dans le corpus
 
 		Param :
-			- motif [str] : motif que l'on veut chercher dans le corpus
+			- motif [str] : motif est la séquence rechercher dans le corpus
 
 		Return : 
-			- indexSeq [list] : liste des index ou ce trouve le modif dans le texte
+			- indexSeq [list] : liste des indexs ou se trouve le modif dans le texte
 		"""
 		indexSeq = []
 
@@ -196,14 +196,14 @@ class Corpus():
 
 	def concorde(self, motif, contexte=10):
 		"""
-		Renvoie un DataFrame contenant les passage ou l'on trouve un motif, avec son contexte associé
+		Renvoie un DataFrame contenant les passages ou l'on trouve un motif, avec son contexte associé
 
 		Param :
-			- motif [str]    : motif que l'on veut chercher dans le corpus
-			- contexte [int] : nombre de caractère que l'on souhaite pour le contexte
+			- motif [str]    : motif est la séquence rechercher dans le corpus
+			- contexte [int] : nombre de caractères que l'on souhaite pour le contexte
 
 		Return :
-			- df [pandas.DataFrame] : DataFrame contenant les contexte gauche et droite aussi que le motif
+			- df [pandas.DataFrame] : DataFrame contenant les contextes à gauche et à droite ainsi que le motif
 		"""
 		dico = {'contexte gauche':[], 'motif':[], 'contexte droit':[]}
 		k = len(motif)
@@ -221,10 +221,10 @@ class Corpus():
 
 	def stats(self, n, display=False):
 		"""
-		Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrent
+		Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrents
 
 		Param :
-			- n [int] : voir les n mots les plus récurrent
+			- n [int] : voir les n mots les plus récurrents
 		"""
 		print(f"\nSTATS sur le corpus {self.__nom} [{self.__ndoc} docs.]")
 		print(f"\tNombre de mots differents : {len(list(self.__vocadf['mot']))}")
@@ -241,7 +241,7 @@ class Corpus():
 
 	def createMatTF(self):
 		"""
-		Methode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
+		Méthode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
 
 		Return:
 			- mat_TFxIDF [scipy.sparse.lil_matrix] : Matrice TFxIDF calculer
@@ -270,7 +270,7 @@ class Corpus():
 
 	def makeSearch(self, enters):
 		"""
-		Methode qui cherche, et affiche, les documents les plus interressant par rapport a l'entrée enters
+		Methode qui cherche, et affiche, les documents les plus interressants par rapport a l'entrée enters
 
 		Param :
 			- enters [str] : mots pour la recherche de documents
