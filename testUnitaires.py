@@ -147,9 +147,11 @@ class TestStringMethods(unittest.TestCase):
 
 		# Méthode stats
 		print(corpus.stats(n=5, display=False)) # test de l'affichage de la méthode stats
+		# faire un test
   
 		# Méthode createMatTF
 		print(corpus.createMatTF()) # affichage de la matrice TFxIDF
+		# faire un test
   
 		# Méthode makesearch()
 		corpus.makeSearch(enters='la')
