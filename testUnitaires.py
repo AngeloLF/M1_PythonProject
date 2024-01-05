@@ -15,7 +15,7 @@ class TestStringMethods(unittest.TestCase):
 		# Test : Est-ce que la création de l'instance à fonctionner et est-ce que l'attribut corpus a bien été initialisée à None
 		self.assertTrue(sg.corpus is None)
 
-		sg.scrap('clustering', arxiv=20, reddit=20)
+		sg.scrap('python', arxiv=20, reddit=20)
 		# Test : Scrap d'arxiv et reddit : on regarde si le nombre de document du corpus n'est plus nul
 		self.assertTrue(sg.corpus.get_ndoc() > 0)
 
@@ -28,7 +28,7 @@ class TestStringMethods(unittest.TestCase):
 		self.assertIn(f"{sg.corpus.get_nom()}_corpus.dataPAP", os.listdir(sg.datafolder))
 
 		sg2 = ScrapingGeneral()
-		sg2.charged('clustering')
+		sg2.charged('python')
 		# Test : On verifie que les données sont charger correctement
 		self.assertTrue(sg2.corpus is not None)
 
