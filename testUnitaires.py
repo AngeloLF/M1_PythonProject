@@ -16,7 +16,11 @@ class TestStringMethods(unittest.TestCase):
 		self.assertTrue(sg.corpus is None)
 
 		sg.scrap('python', arxiv=20, reddit=20)
+<<<<<<< HEAD
 		# Test : Scrap d'arxiv et reddit : on regarde si le nombre de document du corpus n'est plus nul
+=======
+		# Test : Scrap d'arxiv et reddit : on regarde si le nombre de documents du corpus n'est plus nul
+>>>>>>> 9f062247c65f30307ad1d8b9a083eb5eb229a67e
 		self.assertTrue(sg.corpus.get_ndoc() > 0)
 
 		# Si l'on a deja un corpus avec cette query de save, on la suprimme
@@ -29,7 +33,11 @@ class TestStringMethods(unittest.TestCase):
 
 		sg2 = ScrapingGeneral()
 		sg2.charged('python')
+<<<<<<< HEAD
 		# Test : On verifie que les données sont charger correctement
+=======
+		# Test : On verifie que les données sont chargées correctement
+>>>>>>> 9f062247c65f30307ad1d8b9a083eb5eb229a67e
 		self.assertTrue(sg2.corpus is not None)
 
 		os.remove(f"{sg.datafolder}{sg.corpus.get_nom()}_corpus.dataPAP")
