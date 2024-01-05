@@ -61,13 +61,25 @@ class ScrapingGeneral():
 
 
 
+	def factoryDocument(self, doctype, **kwargs):
+
+		if doctype == 'Reddit':
+			return RedditDocument(**kwargs)
+
+		elif doctype == 'Arxiv':
+			return ArxivDocument(**kwargs)
+
+		else:
+			raise 'factoryError'
+
+
 	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
 		"""
-		Permet de scrap des articles de arxiv et les retourner
+		Permet de scrap des articles de arxiv et les returner
 
 		Param :
-			query [str]      : thème de la recherche
-			nb_docs [int]    : nombre de documents arxiv voulus
+			query [str]      : theme de la recherche
+			nb_docs [int]    : nombre de document arxiv voulu
 			nb_start [int]   : on va scrap et prendre les texts a partir de nb_start article (0 par def)
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
 		"""
@@ -77,27 +89,34 @@ class ScrapingGeneral():
 
 		request = urllib.request.urlopen(url).read().decode('utf-8')
 		dic = func_PAP.xmlto(request)
-		for i in range(min(nb_docs, len(dic['feed']['entry']))):
-			if len(dic['feed']['entry'][i]['summary'].replace('\n', ' ')) > limitCarac:
-				try:
-					if type(dic['feed']['entry'][i]['author']) == dict:
-						auteur = [dic['feed']['entry'][i]['author']['name']]
-					elif type(dic['feed']['entry'][i]['author']) == list:
-						auteur = []
-						for auteur_i in dic['feed']['entry'][i]['author']:
-							auteur.append(auteur_i['name'])
-				except:
-					print('WARNING : Problème de formatage dans les auteurs de source arxiv')
-					auteur = ''
-				titre = dic['feed']['entry'][i]['title']
-				date0 = dic['feed']['entry'][i]['published'].replace('T', " ").replace('Z', "")
-				date = datetime.datetime.strptime(date0, '%Y-%m-%d %H:%M:%S')
-				url = dic['feed']['entry'][i]['link'][0]['@href']
-				texte = dic['feed']['entry'][i]['summary'].replace('\n', ' ')
-				category = dic['feed']['entry'][i]['arxiv:primary_category']['@term']
 
-				docu = ArxivDocument(texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
-				self.corpus.addDocument(auteur, docu)
+
+		if 'entry' in dic['feed'].keys():
+
+			for i in range(min(nb_docs, len(dic['feed']['entry']))):
+				if len(dic['feed']['entry'][i]['summary'].replace('\n', ' ')) > limitCarac:
+					try:
+						if type(dic['feed']['entry'][i]['author']) == dict:
+							auteur = [dic['feed']['entry'][i]['author']['name']]
+						elif type(dic['feed']['entry'][i]['author']) == list:
+							auteur = []
+							for auteur_i in dic['feed']['entry'][i]['author']:
+								auteur.append(auteur_i['name'])
+					except:
+						print('WARNING : Problème de formatage dans les auteurs de source arxiv')
+						auteur = ''
+					titre = dic['feed']['entry'][i]['title']
+					date0 = dic['feed']['entry'][i]['published'].replace('T', " ").replace('Z', "")
+					date = datetime.datetime.strptime(date0, '%Y-%m-%d %H:%M:%S')
+					url = dic['feed']['entry'][i]['link'][0]['@href']
+					texte = dic['feed']['entry'][i]['summary'].replace('\n', ' ')
+					category = dic['feed']['entry'][i]['arxiv:primary_category']['@term']
+
+					docu = self.factoryDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
+					self.corpus.addDocument(auteur, docu)
+
+		else:
+			print(f"WARNING : Aucun documents pour la query '{query}'")
 
 
 
@@ -125,7 +144,7 @@ class ScrapingGeneral():
 				titre = post.title
 				texte = post.selftext.replace('\n', ' ')
 				nb_comment = post.num_comments
-				docu = RedditDocument(texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
+				docu = self.factoryDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
 				self.corpus.addDocument(auteur, docu)
 
 
