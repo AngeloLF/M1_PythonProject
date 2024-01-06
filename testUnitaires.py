@@ -149,14 +149,15 @@ class TestStringMethods(unittest.TestCase):
 
 		# Méthode stats
 		print(corpus.stats(n=20, display=False)) # test de l'affichage de la méthode stats
-		# faire un test
+		# Compliquer de faire un test
   
 		# Méthode createMatTF
 		print(corpus.createMatTF()) # affichage de la matrice TFxIDF
-		# faire un test
+		self.assertEqual(corpus.createMatTF().shape, (2, 146))
   
 		# Méthode makesearch()
 		corpus.makeSearch(enters='évolution')
+		
 
 if __name__ == '__main__':
 	unittest.main()
