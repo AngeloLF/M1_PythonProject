@@ -118,6 +118,8 @@ class ScrapingGeneral():
 		else:
 			print(f"WARNING : Aucun documents pour la query '{query}'")
 
+		return None
+
 
 
 	def scrapReddit(self, query, nb_docs=1, limitCarac=20):
@@ -147,6 +149,7 @@ class ScrapingGeneral():
 				docu = self.factoryDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
 				self.corpus.addDocument(auteur, docu)
 
+		return None
 
 
 	def scrap(self, query, limitCarac=20, *args, **kwargs):
@@ -162,14 +165,16 @@ class ScrapingGeneral():
 
 		self.corpus = Corpus(query)
 
+		kwReturns = {}
+
 		for key in kwargs.keys():
 			
 			if key in ['arxiv', 'ar']:
-				self.scrapArxiv(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
+				kwReturns['arxiv'] = self.scrapArxiv(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
 				print("INFO : Sucess to scrap arxiv document")
 
 			elif key in ['reddit', 're']:
-				self.scrapReddit(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
+				kwReturns['reddit'] = self.scrapReddit(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
 				print("INFO : Sucess to scrap reddit document")
 
 			else:
