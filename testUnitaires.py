@@ -13,7 +13,7 @@ class TestStringMethods(unittest.TestCase):
 		# Tests sur l'instance ScrapingGenerale
 		
 		sg = ScrapingGeneral()
-		# Test : Est-ce que la création de l'instance à fonctionner et est-ce que l'attribut corpus a bien été initialisée à None
+		# Test : Est-ce que la création de l'instance a fonctionné et est-ce que l'attribut corpus a bien été initialisée à None
 		self.assertTrue(sg.corpus is None)
 
 		sg.scrap('python', arxiv=20, reddit=20)
@@ -22,7 +22,7 @@ class TestStringMethods(unittest.TestCase):
 
 		self.assertTrue(sg.corpus.get_ndoc() > 0)
 
-		# Si l'on a deja un corpus avec cette query de save, on la suprimme
+		# Si l'on a déjà un corpus avec cette query de save, on la supprime
 		if f"{sg.corpus.get_nom()}_corpus.dataPAP" in os.listdir(sg.datafolder):
 			os.remove(f"{sg.datafolder}{sg.corpus.get_nom()}_corpus.dataPAP")
 
@@ -32,6 +32,7 @@ class TestStringMethods(unittest.TestCase):
 
 		sg2 = ScrapingGeneral()
 		sg2.charged('python')
+  
 		# Test : On verifie que les données sont chargées correctement
 		self.assertTrue(sg2.corpus is not None)
 
@@ -78,7 +79,7 @@ class TestStringMethods(unittest.TestCase):
 
 
 	def test_Corpus_statAuthor(self):
-		# Tests de la classe Documents et Authors
+		# Tests de la classe Document et Author
 
 		fauxAuteur = ['Angelo', 'Clement']
 
@@ -156,7 +157,13 @@ class TestStringMethods(unittest.TestCase):
 		self.assertEqual(corpus.createMatTF().shape, (2, 146))
   
 		# Méthode makesearch()
-		corpus.makeSearch(enters='évolution')
+		corpus.makeSearch(enters='évolution', display=True) # affichage
+  
+		# Testons les plusieurs cas pour la méthode makesearch()
+		self.assertEqual(corpus.makeSearch(enters='évolution', display=True).shape, (1, 3)) # On s'attend à avoir un résultat car "évolution" est présent dans un texte
+		self.assertEqual(corpus.makeSearch(enters='intelligence', display=True).shape, (0, 3)) # présent dans les 2 documents donc pas de résultats
+		self.assertEqual(corpus.makeSearch(enters='angelo', display=True).shape, (0, 3)) # présent dans aucun des documents donc pas de résultats
+
 		
 
 if __name__ == '__main__':
