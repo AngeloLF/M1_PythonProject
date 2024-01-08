@@ -148,8 +148,8 @@ class TestStringMethods(unittest.TestCase):
 		self.assertTrue(isinstance(corpus.concorde(motif='société', contexte=20), pandas.DataFrame)) # le retour est bien un dataframe
 
 		# Méthode stats
-		print(corpus.stats(n=20, display=False)) # test de l'affichage de la méthode stats
-		# Compliquer de faire un test
+		print(type(corpus.stats(n=20, display=True))) # test de l'affichage de la méthode stats
+		self.assertEqual(corpus.stats(n=20, display=True).shape, (20, 3)) # on teste que le dataframe retourner à la bonne dimension
   
 		# Méthode createMatTF
 		print(corpus.createMatTF()) # affichage de la matrice TFxIDF
