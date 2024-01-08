@@ -129,7 +129,8 @@ def UXCHOICE_NEXT_stats(sgi):
 def UXCHOICE_NEXT_Search(sgi):
 	def on_button1bis_clicked(b):
 		with output1bis:
-			sgi.corpus.makeSearch(WGSearch.value)
+			df = sgi.corpus.makeSearch(WGSearch.value, display=True)
+			display(df)
 			UXCHOICE_NEXT(sgi)
 
 	button1bis = widgets.Button(description="Search !")

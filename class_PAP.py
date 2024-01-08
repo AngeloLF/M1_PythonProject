@@ -82,6 +82,9 @@ class ScrapingGeneral():
 			nb_docs [int]    : nombre de document arxiv voulu
 			nb_start [int]   : on va scrap et prendre les texts a partir de nb_start article (0 par def)
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
+
+		Return:
+			- None : Utiliser pour future update
 		"""
 
 		url = self.url0_arxiv + 'search_query=all:{}&start={}&max_results={}'.format(query, nb_start, nb_docs)
@@ -130,6 +133,9 @@ class ScrapingGeneral():
 			query [str]      : theme de la recherche
 			nb_docs [int]    : nombre de document reddit voulu
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
+
+		Return:
+			- None : Utiliser pour future update
 		"""
 
 		reddit = praw.Reddit(client_id='gsfJcIOUGkM8YvJdWR_jWg', client_secret=self.client_secret, user_agent=self.user_agent)

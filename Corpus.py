@@ -28,6 +28,7 @@ class Corpus():
 		__naut [int]                : nombre d'auteurs
 		__allInOne [str]            : string contenant TOUT le contenu des document du corpus
 		__vocadf [pandas.DataFrame] : DataFrame contenant trois colonne : les mots associé avec leurs occurences dans le corpus (terFreq) et au nombre de doc ou ils sont present (docFreq)
+		__mat_TFxIDF [scipy.sparse.lil_matrix] : matrice TFxIDF du corpus (None tant que la méthode createMatTF n'est pas executer)
 
 
 	Getters | Setters :
@@ -59,6 +60,7 @@ class Corpus():
 		self.__naut = 0
 		self.__allInOne = ''
 		self.__vocadf = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]})
+		self.__mat_TFxIDF = None
 
 	def __str__(self):
 		return f"<Corpus {self.get_nom()} | Nb Document : {self.get_ndoc()} | Nb Auteur : {self.get_naut()}>"
@@ -225,10 +227,14 @@ class Corpus():
 
 		Param :
 			- n [int] : voir les n mots les plus récurrent
+
+		Return :
+			- df [pandas.DataFrame] : df contenant les résultat si display est True
 		"""
-		print(f"\nSTATS sur le corpus {self.__nom} [{self.__ndoc} docs.]")
-		print(f"\tNombre de mots differents : {len(list(self.__vocadf['mot']))}")
-		print(f"\tLes {n} mots les plus fréquents : ")
+		if not display:
+			print(f"\nSTATS sur le corpus {self.__nom} [{self.__ndoc} docs.]")
+			print(f"\tNombre de mots differents : {len(list(self.__vocadf['mot']))}")
+			print(f"\tLes {n} mots les plus fréquents : ")
 
 		df_tri = self.__vocadf.sort_values(by='term freq.', ascending=False)
 
@@ -262,16 +268,21 @@ class Corpus():
 				p = self.__vocadf.loc[self.__vocadf['mot'] == mot, 'document freq.'].values[0]
 				mat_TFxIDF[int(iddoc[2:]), mots.index(mot)] = TF/nbmot * np.log(ndoc/p)
 
+		self.__mat_TFxIDF = mat_TFxIDF
+
 		return mat_TFxIDF
 
 
 
-	def makeSearch(self, enters):
+	def makeSearch(self, enters, display=False):
 		"""
 		Methode qui cherche, et affiche, les documents les plus interressant par rapport a l'entrée enters
 
 		Param :
 			- enters [str] : mots pour la recherche de documents
+
+		Return :
+			- df [pandas.DataFrame] : df contenant les résultat si display est True
 		"""
 
 		ndoc = self.__ndoc
@@ -290,9 +301,10 @@ class Corpus():
 			else:
 				print(f"INFO : il n'y a pas {mot}")
 
-		mat_TFxIDF = self.createMatTF()
+		if self.__mat_TFxIDF is None:
+			self.createMatTF()
 
-		vectProb = mat_TFxIDF.dot(vectEnter)
+		vectProb = self.__mat_TFxIDF.dot(vectEnter)
 
 		iddoc = list(range(0, ndoc))
 
@@ -302,11 +314,30 @@ class Corpus():
 
 		nbResult = sum([x > 0 for x in PROD])
 
-		print(f"\n{nbResult} Result(s) for '{enters}' : \n")
+		if not display:
 
-		for rid, prod in zip(RID, PROD):
-			if prod > 0:
-				s = f"id{rid}"
-				print(f"| Titre : {self.__id2loc[s].get_titre()}")
-				print(f"| URL   : {self.__id2loc[s].get_url()}")
-				print(f"| Score : {np.round(prod, 3)}\n")
+			print(f"\n{nbResult} Result(s) for '{enters}' : \n")
+
+			for rid, prod in zip(RID, PROD):
+				if prod > 0:
+					s = f"id{rid}"
+					print(f"| Titre : {self.__id2loc[s].get_titre()}")
+					print(f"| URL   : {self.__id2loc[s].get_url()}")
+					print(f"| Score : {np.round(prod, 3)}\n")
+
+		else:
+
+			dico = {'Titre':[], 'URL':[], 'Score':[]}
+
+			for rid, prod in zip(RID, PROD):
+				if prod > 0:
+					s = f"id{rid}"
+					dico['Titre'].append(self.__id2loc[s].get_titre())
+					dico['URL'].append(self.__id2loc[s].get_url())
+					dico['Score'].append(np.round(prod, 3))
+
+			df = pd.DataFrame.from_dict(dico)
+
+			return df
+
+
