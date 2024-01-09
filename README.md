@@ -15,6 +15,7 @@ Pour que notre programme s'execute correctement, nous avont besoin des packages 
 * numpy [`pip install numpy`]
 * pandas [`pip install pandas`]
 * scipy [`pip install scipy`]
+* colorama [`pip install colorama`]
 * Enfin, divers package souvent déjà installer dans python (vérifié et les installer si nécessaire) :
   * `os`, `pickle`, `urllib`, `re`, `unittest`
 
