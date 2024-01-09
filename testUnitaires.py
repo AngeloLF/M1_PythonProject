@@ -164,6 +164,15 @@ class TestStringMethods(unittest.TestCase):
 		self.assertEqual(corpus.makeSearch(enters='intelligence', display=True).shape, (0, 3)) # présent dans les 2 documents donc pas de résultats
 		self.assertEqual(corpus.makeSearch(enters='angelo', display=True).shape, (0, 3)) # présent dans aucun des documents donc pas de résultats
 
+
+	def test_singleton_sg(self):
+
+		# Tests du singleton
+
+		sg1 = ScrapingGeneral()
+		sg2 = ScrapingGeneral()
+
+		self.assertTrue(sg1 is sg2)
 		
 
 if __name__ == '__main__':

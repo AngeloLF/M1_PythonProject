@@ -3,14 +3,22 @@ import datetime
 import pickle
 import praw
 import os
+from color_console.coloramaALF import *
 
 import func_PAP
 from Document import *
 from Author import *
 from Corpus import *
 
+def singleton(cls):
+	instance = [None]
+	def wrapper(*args, **kwargs):
+		if instance[0] is None:
+			instance[0] = cls(*args, **kwargs)
+		return instance[0]
+	return wrapper
 
-
+@singleton
 class ScrapingGeneral():
     
 	"""
@@ -84,7 +92,8 @@ class ScrapingGeneral():
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
 
 		Return:
-			- None : Utiliser pour future update
+			- nb [int]  : Nombre de documents renvoyer par l'API et garder pour le corpus
+			- msg [str] : Message de problemes si il y en a (None sinon) 
 		"""
 
 		url = self.url0_arxiv + 'search_query=all:{}&start={}&max_results={}'.format(query, nb_start, nb_docs)
@@ -92,6 +101,8 @@ class ScrapingGeneral():
 
 		request = urllib.request.urlopen(url).read().decode('utf-8')
 		dic = func_PAP.xmlto(request)
+		nb = 0
+		msg = None
 
 
 		if 'entry' in dic['feed'].keys():
@@ -106,7 +117,7 @@ class ScrapingGeneral():
 							for auteur_i in dic['feed']['entry'][i]['author']:
 								auteur.append(auteur_i['name'])
 					except:
-						print('WARNING : Problème de formatage dans les auteurs de source arxiv')
+						print(f"{fred}WARNING : Problème de formatage dans les auteurs de source arxiv{rall}")
 						auteur = ''
 					titre = dic['feed']['entry'][i]['title']
 					date0 = dic['feed']['entry'][i]['published'].replace('T', " ").replace('Z', "")
@@ -115,13 +126,15 @@ class ScrapingGeneral():
 					texte = dic['feed']['entry'][i]['summary'].replace('\n', ' ')
 					category = dic['feed']['entry'][i]['arxiv:primary_category']['@term']
 
+					nb += 1
 					docu = self.factoryDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
 					self.corpus.addDocument(auteur, docu)
 
 		else:
-			print(f"WARNING : Aucun documents pour la query '{query}'")
+			print(f"{fred}WARNING : Aucun documents pour la query '{query}'{rall}")
+			msg = 'L\'API n\'a pas renvoyé de résultat'
 
-		return None
+		return (nb, msg)
 
 
 
@@ -135,11 +148,14 @@ class ScrapingGeneral():
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
 
 		Return:
-			- None : Utiliser pour future update
+			- nb [int]  : Nombre de documents renvoyer par l'API et garder pour le corpus
+			- msg [str] : Message de problemes si il y en a (None sinon)
 		"""
 
 		reddit = praw.Reddit(client_id='gsfJcIOUGkM8YvJdWR_jWg', client_secret=self.client_secret, user_agent=self.user_agent)
 		posts = reddit.subreddit(query).hot(limit=nb_docs)
+		nb = 0
+		msg = None
 
 		for post in posts:
 			if len(post.selftext.replace('\n', ' ')) > limitCarac:
@@ -152,10 +168,11 @@ class ScrapingGeneral():
 				titre = post.title
 				texte = post.selftext.replace('\n', ' ')
 				nb_comment = post.num_comments
+				nb += 1
 				docu = self.factoryDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
 				self.corpus.addDocument(auteur, docu)
 
-		return None
+		return (nb, msg)
 
 
 	def scrap(self, query, limitCarac=20, *args, **kwargs):
@@ -167,6 +184,9 @@ class ScrapingGeneral():
 			limitCarac [int] : limite de caractere du texte principal pour accepter un document
 			**kwargs         : donne le nombre de document pour chaque source
 				(Ex : arxiv=10 pour 10 document arxiv)
+
+		Return :
+			- kwReturns [dict] : Dictionnaire contenant des informations sur le déroulement du scraping
 		"""
 
 		self.corpus = Corpus(query)
@@ -177,27 +197,70 @@ class ScrapingGeneral():
 			
 			if key in ['arxiv', 'ar']:
 				kwReturns['arxiv'] = self.scrapArxiv(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
-				print("INFO : Sucess to scrap arxiv document")
+				print(f"{fgreen}INFO : Sucess to scrap arxiv document{rall}")
 
 			elif key in ['reddit', 're']:
 				kwReturns['reddit'] = self.scrapReddit(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
-				print("INFO : Sucess to scrap reddit document")
+				print(f"{fgreen}INFO : Sucess to scrap reddit document{rall}")
 
 			else:
-				print('WARNING : the source {} is not avaible'.format(key))
+				print(f"{fred}WARNING : the source {key} is not avaible{rall}")
+
+		return kwReturns
 
 
 
-	def save(self):
+	def save(self, fileinfo='info_corpus.txt'):
 		"""
 		Permet de save le corpus sous un dataPAP, gerer avec Pickle
 		"""
 
 		name = f"{self.datafolder}{self.corpus.get_nom()}_corpus.dataPAP"
-		print(f"INFO : Sucess to save corpus '{self.corpus.get_nom()}'")
+
+		nbDocs = self.corpus.get_ndoc()
+		nbAuthor = self.corpus.get_naut()
+		nbArxiv = 0
+		nbReddit = 0
+		sizeTotal = 0
+
+		for doc in self.corpus.get_id2loc().values():
+
+			doctype = doc.get_type()
+			if   doctype == "RedditDocument" : nbReddit += 1
+			elif doctype == "ArxivDocument"  : nbArxiv += 1
+			else : print(f"{fred}WARNING : Dans ScrapingGeneral.save : {doctype} non reconnu{rall}")
+
+			sizeTotal += doc.get_size()[1]
+
+		newinfo = f"{self.corpus.get_nom()}-{nbDocs}-{nbAuthor}-{sizeTotal} mots-{nbArxiv}-{nbReddit}"
+
+		if fileinfo not in os.listdir(f"./{self.datafolder}"):
+			lines = [f"Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit", newinfo]
+
+		else:
+			with open(f"./{self.datafolder}{fileinfo}", 'r') as f:
+				lines = f.read().split('\n')
+
+				saving = False
+
+				for i, line in enumerate(lines):
+					if self.corpus.get_nom() in line:
+						lines[i] = newinfo
+						saving = True
+						print(f"{fgreen}INFO : update {fileinfo} for corpus {self.corpus.get_nom()}{rall}")
+
+				if not saving:
+					lines.append(newinfo)
+					print(f"{fgreen}INFO : add corpus {self.corpus.get_nom()} on {fileinfo}{rall}")
+
+		with open(f"./{self.datafolder}{fileinfo}", 'w') as f:
+			f.write('\n'.join(lines))
+			f.close()
 
 		with open(name, 'wb') as f:
 			pickle.dump(self.corpus, f)
+
+		print(f"{fgreen}INFO : Sucess to save corpus '{self.corpus.get_nom()}'{rall}")
 
 
 
@@ -213,6 +276,6 @@ class ScrapingGeneral():
 
 			with open(f"{self.datafolder}{nom}_corpus.dataPAP", 'rb') as f:
 				self.corpus = pickle.load(f)
-				print(f"INFO : Sucess to charge corpus '{nom}'")
+				print(f"{fgreen}INFO : Sucess to charge corpus '{nom}'{rall}")
 		else:
-			print(f"WARNING : il n'y a pas de {self.datafolder}{nom}_corpus.dataPAP")
+			print(f"{fred}WARNING : il n'y a pas de {self.datafolder}{nom}_corpus.dataPAP{rall}")

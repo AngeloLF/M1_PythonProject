@@ -73,3 +73,5 @@ class Author():
 		print(f"Pour l'auteur {self.__name} :")
 		print(f"\t- Nombre de document(s) écrit : {self.__ndoc}")
 		print(f"\t- Taille moy des document : {self.__size[1]/self.__ndoc:.1f} mots")
+
+		return self.__name, self.__ndoc, self.__size[1]/self.__ndoc

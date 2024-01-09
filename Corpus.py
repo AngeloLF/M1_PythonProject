@@ -3,6 +3,7 @@ from scipy import sparse
 import pandas as pd
 import numpy as np
 import re
+from color_console.coloramaALF import *
 
 # def singleton(cls):
 # 	instance = [None]
@@ -169,11 +170,17 @@ class Corpus():
 
 		Param :
 			- authorName [str] : nom de l'auteur dont l'on veut les stats
+
+		Return :
+			- name [str]      : nom de l'auteur
+			- ndoc [int]      : nombrede documents écrit par l'auteur
+			- sizedoc [float] : taille moyenne (en mots) des documents de l'auteurs
 		"""
 		if authorName in self.__id2aut.keys():
-			self.__id2aut[authorName].stats()
+			return self.__id2aut[authorName].stats()
 		else:
-			print(f"WARNING : {authorName} inconnu")
+			print(f"{fyellow}INFO : {authorName} inconnu{rall}")
+			return authorName, 0, 0
 
 
 	
@@ -299,10 +306,11 @@ class Corpus():
 			if mot in mots:
 				vectEnter[mots.index(mot)] = 1
 			else:
-				print(f"INFO : il n'y a pas {mot}")
+				print(f"{fyellow}INFO : il n'y a pas {mot} rechercher dans le corpus{rall}")
 
 		if self.__mat_TFxIDF is None:
 			self.createMatTF()
+			print(f"{fgreen}INFO : création Matrice TFxIDF{rall}")
 
 		vectProb = self.__mat_TFxIDF.dot(vectEnter)
 
