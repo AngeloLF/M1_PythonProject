@@ -3,11 +3,11 @@
 ## M1 Python Avancé Project (PAP)
 
 Projet python pour le premier semestre de M1 Informatique Lyon 2 pour l'UE de Python Avancé.
-* Pour ouvrir le programme, utiliser l'interface jupyter `M1Info_PAPJUP.ipynb` (executer juste la première et seul cellule, et laissez-vous guider)
+* Pour ouvrir le programme, utiliser l'interface jupyter `M1Info_PAPJUP.ipynb` (éxécuter juste la première et seule cellule, et laissez-vous guider)
 
-## Package nécessaire
+## Packages nécessaires
 
-Pour que notre programme s'execute correctement, nous avont besoin des packages suivants : 
+Pour que notre programme s'éxécute correctement, nous avons besoin des packages suivants : 
 * praw [`pip install praw`]
 * datetime [`pip install DateTime`]
 * xmltodict [`pip install xmltodict`]
@@ -16,10 +16,10 @@ Pour que notre programme s'execute correctement, nous avont besoin des packages 
 * pandas [`pip install pandas`]
 * scipy [`pip install scipy`]
 * colorama [`pip install colorama`]
-* Enfin, divers package souvent déjà installer dans python (vérifié et les installer si nécessaire) :
+* Enfin, divers packages souvent déjà installés dans python (vérifier et les installer si nécessaire) :
   * `os`, `pickle`, `urllib`, `re`, `unittest`
 
-## Auteur :
+## Auteurs :
 * Lamure-Fontanini Angelo,
 * Ruiz Clement
 
