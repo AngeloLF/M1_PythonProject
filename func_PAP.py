@@ -5,10 +5,10 @@ import praw
 
 def xmlto(dataxml):
 	"""
-	Permet d'enlever l'entete des document xml, car le package xmltodict, dependant de la version, à des fois un problèmes avec celle ci
-	Il retourne ensuite le fichier xml transformer en dictionnaire.
+	Permet d'enlever l'entête des documents xml, car le package xmltodict, dépendant de la version, a des fois un problème avec celle-ci
+	Il retourne ensuite le fichier xml transformé en dictionnaire.
 
-	Param :
+	Paramètres :
 		dataxml [str] : string contenant un fichier respectant le balisage xml
 
 	Return :
