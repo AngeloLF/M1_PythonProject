@@ -1,2 +1,7 @@
 Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit
-python-40-77-6040 mots-20-20
+astrophysics-96-117-8061 mots-50-46
+python-40-77-6038 mots-20-20
+artificial-91-119-8481 mots-50-41
+moon-25-41-3693 mots-20-5
+cpp-35-69-5130 mots-20-15
+mars-22-36-1324 mots-20-2
