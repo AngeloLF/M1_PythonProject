@@ -1,6 +1,5 @@
 Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit
 astrophysics-96-117-8061 mots-50-46
-python-40-78-5683 mots-20-20
 artificial-91-119-8481 mots-50-41
 moon-60-109-9404 mots-50-10
 cpp-35-69-5130 mots-20-15

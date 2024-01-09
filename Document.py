@@ -124,16 +124,23 @@ class Document():
 		return t
 
 
-	def info(self):
+	def info(self, display=False):
 		"""
 		Permet d'afficher des infos sur le document
 		"""
-		print(f"Document :")
-		print(f"\tTitre : {self.__titre}")
-		print(f"\tAuteur : {self.__auteur}")
-		print(f"\tDate : {self.__date}")
-		print(f"\tSource url : {self.__url}")
-		print(f"\tContenu : [{self.__size[0]} carac. | {self.__size[1]} word | {self.__size[2]} sent.]\n{self.__texte}\n")
+		if not display:
+			print(f"Document :")
+			print(f"\tTitre : {self.__titre}")
+			print(f"\tAuteur : {self.__auteur}")
+			print(f"\tDate : {self.__date}")
+			print(f"\tSource url : {self.__url}")
+			print(f"\tContenu : [{self.__size[0]} carac. | {self.__size[1]} word | {self.__size[2]} sent.]\n{self.__texte}\n")
+			return None
+		else:
+			return [f"Titre : {self.__titre} | Date : {self.__date}",
+					f"Auteur : {self.__auteur}",
+					f"Source url : {self.__url}",
+					f"Contenu : [{self.__size[0]} carac. | {self.__size[1]} word | {self.__size[2]} sent.]\n{self.__texte}\n"]
 
 
 
@@ -202,18 +209,27 @@ class RedditDocument(Document):
 
 
 
-	def info(self):
+	def info(self, display=False):
 		"""
 		Permet d'afficher des infos sur le document
 		"""
-		print(f"Document :")
-		print(f"\tTitre : {self.get_titre()}")
-		print(f"\tAuteur : {self.get_auteur()}")
-		print(f"\tDate : {self.get_date()}")
-		print(f"\tType : {self.get_type()}")
-		print(f"\tSource url : {self.get_url()}")
-		print(f"\tNb comment : {self.__nb_comment}")
-		print(f"\tContenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}\n")
+		if not display:
+			print(f"Document :")
+			print(f"\tTitre : {self.get_titre()}")
+			print(f"\tAuteur : {self.get_auteur()}")
+			print(f"\tDate : {self.get_date()}")
+			print(f"\tType : {self.get_type()}")
+			print(f"\tSource url : {self.get_url()}")
+			print(f"\tNb comment : {self.__nb_comment}")
+			print(f"\tContenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}\n")
+			return None
+		else:
+			return [f"Titre : {self.get_titre()} | Date : {self.get_date()} | Type : {self.get_type()}",
+					f"Auteur : {self.get_auteur()} | Nb comment : {self.__nb_comment}",
+					f"Source url : {self.get_url()}",
+					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
+
+
 
 
 
@@ -281,16 +297,23 @@ class ArxivDocument(Document):
 
 
 
-	def info(self):
+	def info(self, display=False):
 		"""
 		Permet d'afficher des infos sur le document
 		"""
-		print(f"Document :")
-		print(f"\tTitre : {self.get_titre()}")
-		print(f"\tAuteur : {self.get_auteur()}")
-		print(f"\tDate : {self.get_date()}")
-		print(f"\tType : {self.get_type()}")
-		print(f"\tSource url : {self.get_url()}")
-		print(f"\tCategory : {self.__category}")
-		print(f"\tContenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}\n")
-		
+		if not display:
+			print(f"Document :")
+			print(f"\tTitre : {self.get_titre()}")
+			print(f"\tAuteur : {self.get_auteur()}")
+			print(f"\tDate : {self.get_date()}")
+			print(f"\tType : {self.get_type()}")
+			print(f"\tSource url : {self.get_url()}")
+			print(f"\tCategory : {self.__category}")
+			print(f"\tContenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}\n")
+			return None
+		else:
+			return [f"Titre : {self.get_titre()} | Date : {self.get_date()} | Type : {self.get_type()}",
+					f"Auteur : {self.get_auteur()}",
+					f"Source url : {self.get_url()}",
+					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
+	

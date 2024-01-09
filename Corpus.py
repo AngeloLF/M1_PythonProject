@@ -86,16 +86,25 @@ class Corpus():
 
 
 
-	def show(self, nbShow, reverse=False):
+	def show(self, nbShow, reverse=False, display=False):
 		"""
 		Permet d'afficher les nbShow premiers documents du corpus (trié par date croissante)
 		
 		Param : 
 			- nbShow [int]   : Nombre de document(s) à afficher
 			- reverse [bool] : True pour trier par date décroissante
+
+		Return :
+			- returnStr [list] : liste avec les infos de show
 		"""
-		print(f"---- Corpus {self.__nom} [{self.__ndoc} docs. | {self.__naut} auth.] :")
-		print(f"- {nbShow} premier(s) document(s), trier par date : \n")
+		returnStr = []
+
+		if not display:
+			print(f"---- Corpus {self.__nom} [{self.__ndoc} docs. | {self.__naut} auth.] :")
+			print(f"- {nbShow} premier(s) document(s), trier par date :")
+		
+		returnStr = [f" Corpus {self.__nom} [{self.__ndoc} docs. | {self.__naut} auth.] :",
+					 f"- {nbShow} premier(s) document(s), trier par date :"]
 
 		if reverse:
 			funcm = max
@@ -106,9 +115,11 @@ class Corpus():
 
 		for i in range(nbShow):
 			imin = xd.index(funcm(xd))
-			self.__id2loc[xk[imin]].info()
+			returnStr.append(self.__id2loc[xk[imin]].info(display=display))
 			xk.pop(imin)
 			xd.pop(imin)
+
+		if display : return returnStr
 
 
 
@@ -289,7 +300,7 @@ class Corpus():
 			- enters [str] : mots pour la recherche de documents
 
 		Return :
-			- df [pandas.DataFrame] : df contenant les résultats si display est True
+			- returnPP [list] : list contenant les résultats si display est True
 		"""
 
 		ndoc = self.__ndoc
@@ -335,17 +346,22 @@ class Corpus():
 
 		else:
 
-			dico = {'Titre':[], 'URL':[], 'Score':[]}
+			returnPP = [f"{nbResult} Result(s) for '{enters}' :"]
 
 			for rid, prod in zip(RID, PROD):
 				if prod > 0:
 					s = f"id{rid}"
-					dico['Titre'].append(self.__id2loc[s].get_titre())
-					dico['URL'].append(self.__id2loc[s].get_url())
-					dico['Score'].append(np.round(prod, 3))
 
-			df = pd.DataFrame.from_dict(dico)
+					if self.__id2loc[s].get_type() == "RedditDocument":
+						offset = 'https://www.reddit.com'
+					else:
+						offset = ''
 
-			return df
+					returnPP.append([self.__id2loc[s].get_titre(), 
+									 self.__id2loc[s].get_type(), 
+									 offset + self.__id2loc[s].get_url(), 
+									 np.round(prod, 3)])
+
+			return returnPP
 
 
