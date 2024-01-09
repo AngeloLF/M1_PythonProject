@@ -13,7 +13,7 @@ class TestStringMethods(unittest.TestCase):
 		# Tests sur l'instance ScrapingGenerale
 		
 		sg = ScrapingGeneral()
-		# Test : Est-ce que la création de l'instance a fonctionné et est-ce que l'attribut corpus a bien été initialisée à None
+		# Test : Est-ce que la création de l'instance a fonctionné et est-ce que l'attribut corpus a bien été initialisé à None
 		self.assertTrue(sg.corpus is None)
 
 		sg.scrap('python', arxiv=20, reddit=20)
@@ -142,14 +142,14 @@ class TestStringMethods(unittest.TestCase):
   
 		# Méthode search
 		print(corpus.search(motif='société'))
-		self.assertEqual(3, len(corpus.search('technologique'))) # il y a bien 3 fois le mot technologie dans l'ensemble du corpus
+		self.assertEqual(3, len(corpus.search('technologique'))) # il y a bien 3 fois le mot "technologie" dans l'ensemble du corpus
 
 		# Méthode concorde
 		print(corpus.concorde(motif='société', contexte=20))
 		self.assertTrue(isinstance(corpus.concorde(motif='société', contexte=20), pandas.DataFrame)) # le retour est bien un dataframe
 
 		# Méthode stats
-		print(type(corpus.stats(n=20, display=True))) # test de l'affichage de la méthode stats
+		print(type(corpus.stats(n=20, display=False))) # test de l'affichage de la méthode stats
 		self.assertEqual(corpus.stats(n=20, display=True).shape, (20, 3)) # on teste que le dataframe retourner à la bonne dimension
   
 		# Méthode createMatTF
@@ -157,7 +157,7 @@ class TestStringMethods(unittest.TestCase):
 		self.assertEqual(corpus.createMatTF().shape, (2, 146))
   
 		# Méthode makesearch()
-		corpus.makeSearch(enters='évolution', display=True) # affichage
+		corpus.makeSearch(enters='évolution', display=False) # affichage
   
 		# Testons les plusieurs cas pour la méthode makesearch()
 		self.assertEqual(corpus.makeSearch(enters='évolution', display=True).shape, (1, 3)) # On s'attend à avoir un résultat car "évolution" est présent dans un texte
@@ -167,7 +167,7 @@ class TestStringMethods(unittest.TestCase):
 
 	def test_singleton_sg(self):
 
-		# Tests du singleton
+		# Test du singleton
 
 		sg1 = ScrapingGeneral()
 		sg2 = ScrapingGeneral()

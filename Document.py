@@ -5,24 +5,24 @@ import re
 
 class Document():
 	"""
-	Classe servant a contenir les métadonnée d'un document
+	Classe servant à contenir les métadonnées d'un document
 
-	Param init :
+	Paramètres d'initialisation :
 		titre [str]              : titre du document (def '', pas conseillé)
-		auteur [list]            : auteurs du document (def [])
+		auteur [list]            : auteur(s) du document (def [])
 		date [datetime.datetime] : date de publication (def: None)
 		url [str]                : url source du document (def: '')
 		texte [str]              : contenu textuel du document (def: '', pas conseillé)
 
-	Attribut :
+	Attributs :
 		__titre [str]              : titre du document
-		__auteur [list]            : auteurs du document
+		__auteur [list]            : auteur(s) du document
 		__date [datetime.datetime] : date de publication
 		__url [str]                : url source du document
 		__texte [str]              : contenu textuel du document
-		__voca [dict]              : dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurence dans le document (pour les values)
+		__voca [dict]              : dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
 		__type [str]               : type, plus précise pour les classes filles
-		__size [list]              : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrases>] dans le doc
+		__size [list]              : liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
 
 	Getters | Setters :
 		get_titre()  | set_titre(titre)
@@ -33,7 +33,7 @@ class Document():
 		get_size()   | *
 		get_voca()   | set_statsMots()
 
-	Methode
+	Methodes :
 		info()              : Permet d'afficher des infos sur le document
 		nettoyertexte(text) : Permet de nettoyer le texte du document
 	"""
@@ -46,7 +46,7 @@ class Document():
 		self.set_texte(texte)
 
 		self.__type = "Document"
-		self.__size = [len(texte), len(texte.split(" ")), len(texte.split("."))] #caractere, mots, phrase
+		self.__size = [len(texte), len(texte.split(" ")), len(texte.split("."))] #caractères, mots, phrases
 
 	def __str__(self):
 		return f"<Document | {self.get_titre()} | Auteur : {self.get_auteur()}>"
@@ -113,11 +113,11 @@ class Document():
 		"""
 		Permet de nettoyer le texte du document
 
-		Param :
+		Paramètres :
 			text [str] : texte à nettoyer
 
 		Return :
-			[str] : texte nettoyer
+			[str] : texte nettoyé
 		"""
 		t = re.sub(r'[^\w\s]', '', text.lower().replace('.', ' ').replace('\n', ' '))
 		t = re.sub(r'[\d]', '', t)
@@ -142,41 +142,41 @@ class Document():
 
 class RedditDocument(Document):
 	"""
-	RedditDocument heriter de Document. Permet d'ajouter des attributs unique de Reddit.
+	RedditDocument héritée de Document. Permet d'ajouter des attributs unique de Reddit.
 
-	Param init :
-		titre [str]              : (heritage Document) titre du document (def '', pas conseiller)
-		auteur [list]            : (heritage Document) auteurs du document (def [])
-		date [datetime.datetime] : (heritage Document) date de publication (def: None)
-		url [str]                : (heritage Document) url source du document (def: '')
-		texte [str]              : (heritage Document) contenu textuel du document (def: '', pas conseiller)
-		nb_comment [int]         : nombre de commentaire du document (ici de l'article Reddit plus precisement)(def: 0)
+	Paramètres  d'initialisation :
+		titre [str]              : (héritage Document) titre du document (def '', pas conseillé)
+		auteur [list]            : (héritage Document) auteur(s) du document (def [])
+		date [datetime.datetime] : (héritage Document) date de publication (def: None)
+		url [str]                : (héritage Document) url source du document (def: '')
+		texte [str]              : (héritage Document) contenu textuel du document (def: '', pas conseillé)
+		nb_comment [int]         : nombre de commentaire(s) du document (ici de l'article Reddit plus précisément)(def: 0)
 
-	Attribut :
-		__titre [str]              : (heritage Document) titre du document
-		__auteur [list]            : (heritage Document) auteurs du document
-		__date [datetime.datetime] : (heritage Document) date de publication
-		__url [str]                : (heritage Document) url source du document
-		__texte [str]              : (heritage Document) contenu textuel du document
-		__voca [dict]              : (heritage Document) dictionnaire qui associe les moyts du texte (qui sont les keys) avec les occurence dans le document (pour les values)
-		__type [str]               : (heritage Document) type du document (source)
-		__size [list]              : (heritage Document) liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
-		__nb_comment [int]         : nombre de commentaire du document (ici de l'article Reddit plus precisement)
+	Attributs :
+		__titre [str]              : (héritage Document) titre du document
+		__auteur [list]            : (héritage Document) auteur(s) du document
+		__date [datetime.datetime] : (héritage Document) date de publication
+		__url [str]                : (héritage Document) url source du document
+		__texte [str]              : (héritage Document) contenu textuel du document
+		__voca [dict]              : (héritage Document) dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
+		__type [str]               : (héritage Document) type du document (source)
+		__size [list]              : (héritage Document) liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
+		__nb_comment [int]         : nombre de commentaire(s) du document (ici de l'article Reddit plus précisément)
 
 	Getters | Setters :
-		get_titre()      | set_titre(titre)           (heritage Document)
-		get_auteur()     | set_auteur(auteur)         (heritage Document)
-		get_date()       | set_date(date)             (heritage Document)
-		get_url()        | set_url(url)               (heritage Document)
-		get_texte()      | set_texte(texte)           (heritage Document)
-		get_size()       | *                          (heritage Document)
-		get_voca()       | set_statsMots()            (heritage Document)
+		get_titre()      | set_titre(titre)           (héritage Document)
+		get_auteur()     | set_auteur(auteur)         (héritage Document)
+		get_date()       | set_date(date)             (héritage Document)
+		get_url()        | set_url(url)               (héritage Document)
+		get_texte()      | set_texte(texte)           (héritage Document)
+		get_size()       | *                          (héritage Document)
+		get_voca()       | set_statsMots()            (héritage Document)
 		get_nb_comment() | set_nb_comment(nb_comment)
 		get_type()       | *
 
-	Methode
-		nettoyertexte(text) : (heritage Document) Permet de nettoyer le texte du document
-		info()              : Permet d'afficher des infos sur le document (ajout du nombre de commentaire /rapport a Document.info)
+	Methodes :
+		nettoyertexte(text) : (héritage Document) Permet de nettoyer le texte du document
+		info()              : Permet d'afficher des infos sur le document (ajout du nombre de commentaire(s) /rapport a Document.info)
 	"""
 
 	def __init__(self, titre='', auteur=[], date=None, url='', texte='', nb_comment=0):
@@ -222,40 +222,40 @@ class RedditDocument(Document):
 
 class ArxivDocument(Document):
 	"""
-	ArxivDocument heriter de Document. Permet d'ajouter des attributs unique d'Arxiv.
+	ArxivDocument héritée de Document. Permet d'ajouter des attributs unique d'Arxiv.
 
-	Param init :
-		titre [str]              : (heritage Document) titre du document (def '', pas conseiller)
-		auteur [list]            : (heritage Document) auteurs du document (def [])
-		date [datetime.datetime] : (heritage Document) date de publication (def: None)
-		url [str]                : (heritage Document) url source du document (def: '')
-		texte [str]              : (heritage Document) contenu textuel du document (def: '', pas conseiller)
-		category [str]           : categorie du document, renseignement directement par l'API d'Arxiv (def: '')
+	Paramètres d'initialisation :
+		titre [str]              : (héritage Document) titre du document (def '', pas conseillé)
+		auteur [list]            : (héritage Document) auteur(s) du document (def [])
+		date [datetime.datetime] : (héritage Document) date de publication (def: None)
+		url [str]                : (héritage Document) url source du document (def: '')
+		texte [str]              : (héritage Document) contenu textuel du document (def: '', pas conseillé)
+		category [str]           : catégorie du document, renseignement directement par l'API d'Arxiv (def: '')
 
 	Attributs :
-		__titre [str]              : (heritage Document) titre du document
-		__auteur [list]            : (heritage Document) auteurs du document
-		__date [datetime.datetime] : (heritage Document) date de publication
-		__url [str]                : (heritage Document) url source du document
-		__texte [str]              : (heritage Document) contenu textuel du document
-		__voca [dict]              : (heritage Document) dictionnaire qui associe les moyts du texte (qui sont les keys) avec les occurence dans le document (pour les values)
-		__size [list]              : (heritage Document) liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] dans le doc
-		__category [str]           : categorie du document, renseignement directement par l'API d'Arxiv (def: '')
+		__titre [str]              : (héritage Document) titre du document
+		__auteur [list]            : (héritage Document) auteur(s) du document
+		__date [datetime.datetime] : (héritage Document) date de publication
+		__url [str]                : (héritage Document) url source du document
+		__texte [str]              : (héritage Document) contenu textuel du document
+		__voca [dict]              : (héritage Document) dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
+		__size [list]              : (héritage Document) liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
+		__category [str]           : catégorie du document, renseignement directement par l'API d'Arxiv (def: '')
 
 	Getters | Setters :
-		get_titre()    | set_titre(titre)       (heritage Document)
-		get_auteur()   | set_auteur(auteur)     (heritage Document)
-		get_date()     | set_date(date)         (heritage Document)
-		get_url()      | set_url(url)           (heritage Document)
-		get_texte()    | set_texte(texte)       (heritage Document)
-		get_size()     | *                      (heritage Document)
-		get_voca()     | set_statsMots()        (heritage Document)
+		get_titre()    | set_titre(titre)       (héritage Document)
+		get_auteur()   | set_auteur(auteur)     (héritage Document)
+		get_date()     | set_date(date)         (héritage Document)
+		get_url()      | set_url(url)           (héritage Document)
+		get_texte()    | set_texte(texte)       (héritage Document)
+		get_size()     | *                      (héritage Document)
+		get_voca()     | set_statsMots()        (héritage Document)
 		get_category() | set_category(category)
 		get_type()     | *
 
 	Methode
-		nettoyertexte(text) : (heritage Document) Permet de nettoyer le texte du document
-		info() : Permet d'afficher des infos sur le document (ajout de la categorie /rapport a Document.info)
+		nettoyertexte(text) : (héritage Document) Permet de nettoyer le texte du document
+		info() : Permet d'afficher des infos sur le document (ajout de la catégorie /rapport à Document.info)
 	"""
 
 	def __init__(self, titre='', auteur=[], date='', url='', texte='', category=''):

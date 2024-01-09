@@ -22,33 +22,33 @@ def singleton(cls):
 class ScrapingGeneral():
     
 	"""
-	Class scrapingGeneral, qui va servir à la gestion du scraping, et ceux avec plusieurs sources
-	Pour plus d'information suplémentaire : 
+	Classe scrapingGeneral, qui va servir à la gestion du scraping, et ceux avec plusieurs sources
+	Pour plus d'informations : 
 	- Source pour le scraping Reddit : https://towardsdatascience.com/scraping-reddit-data-1c0af3040768
 	- Source pour le scraping Arxiv : https://info.arxiv.org/help/api/index.html
 	
-	Param init :
-		client_id [str]     : donner par default (voir source pour plus d'info)
-		client_secret [str] : donner par default (voir source pour plus d'info)
-		user_agent [str]    : donner par default (voir source pour plus d'info)
-		url0_arxiv [str]    : donner par default, l'url `prefixe` par default pour la recherche arxiv
+	Paramètres d'initialisation :
+		client_id [str]     : donné par default (voir source pour plus d'informations)
+		client_secret [str] : donné par default (voir source pour plus d'informations)
+		user_agent [str]    : donné par default (voir source pour plus d'informations)
+		url0_arxiv [str]    : donné par default, l'url `prefixe` par default pour la recherche arxiv
 		datafolder [str]    : nom du dossier ou ce trouve les dossiers | 'data/'
 
-	Attribut : 
-		client_id [str]        : (voir source pour plus d'info)
-		client_secret [str]    : (voir source pour plus d'info)
-		user_agent [str]       : (voir source pour plus d'info)
-		source [dict]          : dict contenant des sources pour certaine info (ex: source['reddit'])
+	Attributs : 
+		client_id [str]        : (voir source pour plus d'informations)
+		client_secret [str]    : (voir source pour plus d'informations)
+		user_agent [str]       : (voir source pour plus d'informations)
+		source [dict]          : dict contenant des sources pour certaines infos (ex: source['reddit'])
 		url0_arxiv [str]       : l'url `prefixe` par default pour la recherche arxiv
-		datafolder [str]       : nom du dossier ou ce trouve les dossiers
-		corpus [Corpus.Corpus] : corpus, contenant tout les documents, auteurs, ... (regarder sa doc pour plus d'info)
+		datafolder [str]       : nom du dossier où se trouve les dossiers
+		corpus [Corpus.Corpus] : corpus, contenant tous les documents, auteurs, ... (regarder sa doc pour plus d'info)
 
-	Methode : 
-		scrapReddit(query, nb_docs)          : Permet de scrap des articles de reddit et les returner
-		scrapArxiv(query, nb_docs, nb_start) : Permet de scrap des articles de arxiv et les returner
-		scrap(query, *args, **kwargs)        : Permet de scrap des articles de nature diverses et d'alimenter corpus
-		save()                               : Permet de save le corpus sous un dataPAP, gerer avec Pickle
-		charged()                            : Permet de charger des donnee deja faite, present dans la dossier datafolder
+	Méthodes : 
+		scrapReddit(query, nb_docs)          : Permet de scrap des articles de reddit et les retourner
+		scrapArxiv(query, nb_docs, nb_start) : Permet de scrap des articles de arxiv et les retourner
+		scrap(query, *args, **kwargs)        : Permet de scrap des articles de nature diverses et d'alimenter le corpus
+		save()                               : Permet de save le corpus sous un dataPAP, géré avec Pickle
+		charged()                            : Permet de charger des données déjà faites, présents dans le dossier datafolder
 	"""
 
 	def __init__(self,  
@@ -83,17 +83,17 @@ class ScrapingGeneral():
 
 	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
 		"""
-		Permet de scrap des articles de arxiv et les returner
+		Permet de scrap des articles de arxiv et les retourner
 
-		Param :
-			query [str]      : theme de la recherche
-			nb_docs [int]    : nombre de document arxiv voulu
-			nb_start [int]   : on va scrap et prendre les texts a partir de nb_start article (0 par def)
-			limitCarac [int] : limite de caractere du texte principal pour accepter un document
+		Paramètres :
+			query [str]      : thème de la recherche
+			nb_docs [int]    : nombre de document(s) arxiv voulu(s)
+			nb_start [int]   : on va scrap et prendre les texts à partir de nb_start article (0 par def)
+			limitCarac [int] : limite de caractère du texte principal pour accepter un document
 
 		Return:
-			- nb [int]  : Nombre de documents renvoyer par l'API et garder pour le corpus
-			- msg [str] : Message de problemes si il y en a (None sinon) 
+			- nb [int]  : Nombre de document(s) renvoyé(s) par l'API et gardé(s) pour le corpus
+			- msg [str] : Message de problèmes si il y en a (None sinon) 
 		"""
 
 		url = self.url0_arxiv + 'search_query=all:{}&start={}&max_results={}'.format(query, nb_start, nb_docs)
@@ -140,16 +140,16 @@ class ScrapingGeneral():
 
 	def scrapReddit(self, query, nb_docs=1, limitCarac=20):
 		"""
-		Permet de scrap des articles de reddit et les returner
+		Permet de scrap des articles de reddit et les retourner
 
-		Param :
-			query [str]      : theme de la recherche
-			nb_docs [int]    : nombre de document reddit voulu
-			limitCarac [int] : limite de caractere du texte principal pour accepter un document
+		Paramètres :
+			query [str]      : thème de la recherche
+			nb_docs [int]    : nombre de document(s) reddit voulu(s)
+			limitCarac [int] : limite de caractère(s) du texte principal pour accepter un document
 
 		Return:
-			- nb [int]  : Nombre de documents renvoyer par l'API et garder pour le corpus
-			- msg [str] : Message de problemes si il y en a (None sinon)
+			- nb [int]  : Nombre de document(s) renvoyé(s) par l'API et gardé(s) pour le corpus
+			- msg [str] : Message de problèmes si il y en a (None sinon)
 		"""
 
 		reddit = praw.Reddit(client_id='gsfJcIOUGkM8YvJdWR_jWg', client_secret=self.client_secret, user_agent=self.user_agent)
@@ -177,13 +177,13 @@ class ScrapingGeneral():
 
 	def scrap(self, query, limitCarac=20, *args, **kwargs):
 		"""
-		Permet de scrap des articles de nature diverses et d'alimenter corpus
+		Permet de scrap des articles de nature diverse et d'alimenter corpus
 
 		Param :
-			query [str]      : theme de la recherche
-			limitCarac [int] : limite de caractere du texte principal pour accepter un document
-			**kwargs         : donne le nombre de document pour chaque source
-				(Ex : arxiv=10 pour 10 document arxiv)
+			query [str]      : thème de la recherche
+			limitCarac [int] : limite de caractère(s) du texte principal pour accepter un document
+			**kwargs         : donne le nombre de document(s) pour chaque source
+				(Ex : arxiv=10 pour 10 documents arxiv)
 
 		Return :
 			- kwReturns [dict] : Dictionnaire contenant des informations sur le déroulement du scraping
@@ -266,7 +266,7 @@ class ScrapingGeneral():
 
 	def charged(self, nom):
 		"""
-		Permet de charger des donnee deja faite, present dans la dossier datafolder
+		Permet de charger des données déjà produites, présent dans le dossier datafolder
 		
 		Param : 
 			nom [str] : nom du corpus voulu

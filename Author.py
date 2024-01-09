@@ -3,16 +3,16 @@
 
 class Author():
 	"""
-	Classe servant a contenir les meta donnee d'un auteur
+	Classe servant à contenir les métadonnées d'un auteur
 
-	Param init :
+	Paramètres d'initialisation :
 		name [str] : nom de l'auteur
 
-	Attribut :
+	Attributs :
 		__name [str]        : nom de l'auteur
-		__ndoc [int]        : nombre de document publiee
-		__production [dict] : dict des document ecrit par l'auteur
-		__size [list]       : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] ecrit par l'auteur
+		__ndoc [int]        : nombre de document(s) publié(s)
+		__production [dict] : dict des documents ecrits par l'auteur
+		__size [list]       : liste contenant 3 int [<nombre carac>, <nombre mots>, <nombre phrase>] ecrits par l'auteur
 	
 	Getters | Setters :
 		get_name()       | set_name(name)
@@ -22,7 +22,7 @@ class Author():
 
 	Methode:
 		add(document) : Permet d'ajouter un document dans la liste de l'auteur
-		stats()       : Permet d'afficher des stats sur l'auteur (nb doc ...)
+		stats()       : Permet d'afficher des stats sur l'auteur (nb docs...)
 	"""
 
 	def __init__(self, name):
@@ -32,7 +32,7 @@ class Author():
 		self.__size = [0, 0, 0]
 	
 	def __str__(self):
-		return f"<Author | {self.__name} | Nombre de document : {self.__ndoc}>"
+		return f"<Author | {self.__name} | Nombre de document(s) : {self.__ndoc}>"
 
 
 
@@ -55,7 +55,7 @@ class Author():
 		Permet d'ajouter un document dans la liste de l'auteur
 
 		Param :
-			document [Document.Document] : Document à ajouter dans la liste des document
+			document [Document.Document] : Document à ajouter dans la liste des documents
 		"""
 		if document.get_titre() not in self.__production.keys():
 			self.__ndoc += 1
@@ -68,10 +68,10 @@ class Author():
 
 	def stats(self):
 		"""
-		Permet d'afficher des stats sur l'auteur (nb doc ...)
+		Permet d'afficher des stats sur l'auteur (nb docs...)
 		"""
 		print(f"Pour l'auteur {self.__name} :")
-		print(f"\t- Nombre de document(s) écrit : {self.__ndoc}")
-		print(f"\t- Taille moy des document : {self.__size[1]/self.__ndoc:.1f} mots")
+		print(f"\t- Nombre de document(s) écrit(s) : {self.__ndoc}")
+		print(f"\t- Taille moy des documents : {self.__size[1]/self.__ndoc:.1f} mots")
 
 		return self.__name, self.__ndoc, self.__size[1]/self.__ndoc
