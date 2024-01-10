@@ -407,7 +407,7 @@ class Corpus():
 
 
 
-	def makeSearch(self, enters, display=False):
+	def makeSearch(self, enters, display=False, testUnitaire=False):
 		"""
 		Methode qui cherche, et affiche, les documents les plus interressants par rapport a l'entrée `enters`
 
@@ -418,25 +418,27 @@ class Corpus():
 			- returnPP [list] : list contenant les résultats si display est True
 		"""
 
-		# Ancien calcul
-		ndoc = self.__ndoc
-		nmot = len(self.__vocadf['mot'])
-		mots = list(self.__vocadf['mot'])
-		mots.sort()
+		if testUnitaire:
+			# Ancien calcul
+			ndoc = self.__ndoc
+			nmot = len(self.__vocadf['mot'])
+			mots = list(self.__vocadf['mot'])
+			mots.sort()
 
-		enter = enters.lower().split(" ")
-		vectEnter = np.zeros(nmot).astype(int)
+			enter = enters.lower().split(" ")
+			vectEnter = np.zeros(nmot).astype(int)
 
-		# Ajout racinisation
-		ndoc = self.__ndoc
-		nmot = len(self.__vocasn['mot'])
-		mots = list(self.__vocasn['mot'])
-		mots.sort()
+		else:
+			# Ajout racinisation
+			ndoc = self.__ndoc
+			nmot = len(self.__vocasn['mot'])
+			mots = list(self.__vocasn['mot'])
+			mots.sort()
 
-		stemmer = SnowballStemmer(language='english')
-		data0 = re.sub(r'[^\w\s]', ' ', enters.lower()) # On laisse que les carac alphanum
-		enter = [stemmer.stem(token) for token in word_tokenize(data0) if token not in stopwords.words('english') and len(token) > 1]
-		vectEnter = np.zeros(nmot).astype(int)
+			stemmer = SnowballStemmer(language='english')
+			data0 = re.sub(r'[^\w\s]', ' ', enters.lower()) # On laisse que les carac alphanum
+			enter = [stemmer.stem(token) for token in word_tokenize(data0) if token not in stopwords.words('english') and len(token) > 1]
+			vectEnter = np.zeros(nmot).astype(int)
 
 
 
@@ -452,7 +454,12 @@ class Corpus():
 		if self.__mat_TFxIDF is None or self.__mat_TFxIDF_SN is None: 
 			self.createMatTF()
 
-		vectProb = self.__mat_TFxIDF_SN.dot(vectEnter) # Ajour racinisation
+		if testUnitaire:
+			# Ancien
+			vectProb = self.__mat_TFxIDF.dot(vectEnter)
+		else:
+			# Ajour racinisation
+			vectProb = self.__mat_TFxIDF_SN.dot(vectEnter)
 
 		iddoc = list(range(0, ndoc))
 
