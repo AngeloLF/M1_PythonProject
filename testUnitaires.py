@@ -44,6 +44,19 @@ class TestStringMethods(unittest.TestCase):
 		# Tests de la classe RedditDocument et Corpus
 
 		fauxAuteur = ['Angelo', 'Clement']
+  
+		fauxCorp = Corpus.Corpus('FauxCorpus')
+		fauxCorp.addDocument(doctype='Reddit',
+			titre='Faux Titre', 
+			auteur=fauxAuteur, 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte='Le faux texte c\'est ici', 
+			nb_comment=999)
+
+		self.assertEqual(list(fauxCorp.get_id2aut().keys()), fauxAuteur)
+  
+		# Tests des méthodes dans Document
 
 		fauxDocu = Document.RedditDocument(titre='Faux Titre', 
 			auteur=fauxAuteur, 
@@ -51,13 +64,6 @@ class TestStringMethods(unittest.TestCase):
 			url='Non.com', 
 			texte='Le faux texte c\'est ici', 
 			nb_comment=999)
-  
-		fauxCorp = Corpus.Corpus('FauxCorpus')
-		fauxCorp.addDocument(fauxAuteur, fauxDocu)
-
-		self.assertEqual(list(fauxCorp.get_id2aut().keys()), fauxAuteur)
-  
-		# Tests des méthodes dans Document
   
 		self.assertEqual(fauxDocu.get_titre(), 'Faux Titre')
 		self.assertEqual(fauxDocu.get_auteur(), fauxAuteur)
@@ -92,7 +98,13 @@ class TestStringMethods(unittest.TestCase):
 
 		# Test de Corpus et ses méthodes
 		fauxCorp = Corpus.Corpus('FauxCorpus')
-		fauxCorp.addDocument(fauxAuteur, fauxDocu)
+		fauxCorp.addDocument(doctype='Reddit',
+			titre='Faux Titre', 
+			auteur=fauxAuteur, 
+			date=datetime.datetime.now(), 
+			url='Non.com', 
+			texte='Le faux texte c\'est ici', 
+			nb_comment=999)
 
 		# Tests de la méthode statsAuthor si l'auteur existe
 		fauxCorp.statAuthor('Angelo')
@@ -122,23 +134,23 @@ class TestStringMethods(unittest.TestCase):
 		# Création de documents et d'auteurs fictifs
 		fauxAuteur2 = [['Angelo', 'Clement'], ['Angelo'], ['Celian']]
 
-		fauxDocu3 = Document.RedditDocument(titre='Intelligence artifielle par gpt 1', 
+		corpus = Corpus.Corpus("test corpus")
+
+		corpus.addDocument(doctype='Reddit',
+			titre='Intelligence artifielle par gpt 1', 
 			auteur=fauxAuteur2[2], 
 			date=datetime.datetime.now(), 
 			url='Non.com', 
 			texte="L'intelligence artificielle (IA) a émergé comme une force transformative, redéfinissant la manière dont nous interagissons avec la technologie et percevons le monde qui nous entoure. Dotée de capacités d'apprentissage et d'analyse exceptionnelles, l'IA permet des avancées spectaculaires dans des domaines tels que la médecine, la finance, et la recherche scientifique. Cependant, son ascension rapide soulève également des questions éthiques et sociétales cruciales, notamment sur la confidentialité des données, la prise de décision automatisée et les implications sur l'emploi. En naviguant dans cette ère d'intelligence artificielle, la société est confrontée au défi de trouver un équilibre entre l'exploitation de son potentiel et la mise en place de garde-fous pour préserver nos valeurs fondamentales", 
 			nb_comment=999)
-  
-		fauxDocu4 = Document.ArxivDocument(titre='Intelligence artifielle par gpt 2', 
+
+		corpus.addDocument('Arxiv',
+			titre='Intelligence artifielle par gpt 2', 
 			auteur=fauxAuteur2[1], 
 			date=datetime.datetime.now(), 
 			url='Non.com', 
    			texte="Dans le sillage de l'IA, émerge un paysage technologique en constante évolution qui façonne notre quotidien de manière insoupçonnée. Des assistants virtuels aux algorithmes de recommandation personnalisée, l'IA a infiltré notre vie quotidienne, simplifiant des tâches jadis complexes et augmentant notre productivité. Cependant, en parallèle, elle suscite des débats sur les implications à long terme de son développement. Les chercheurs, les décideurs et la société dans son ensemble se trouvent à la croisée des chemins, devant concilier l'innovation technologique avec la préservation de l'éthique et des droits humains. Ainsi, la trajectoire de l'intelligence artificielle devient un véritable enjeu sociétal, appelant à une réflexion approfondie sur la manière dont nous souhaitons façonner notre avenir avec cette puissante force technologique",
 			category='IA')
-
-		corpus = Corpus.Corpus("test corpus")
-		corpus.addDocument(document=fauxDocu3, auteur=fauxAuteur2[2])
-		corpus.addDocument(document=fauxDocu4, auteur=fauxAuteur2[1])
   
 		# Méthode search
 		print(corpus.search(motif='société'))
@@ -160,9 +172,9 @@ class TestStringMethods(unittest.TestCase):
 		corpus.makeSearch(enters='évolution', display=False) # affichage
   
 		# Testons les plusieurs cas pour la méthode makesearch()
-		# self.assertEqual(corpus.makeSearch(enters='évolution', display=True).shape, (1, 3)) # On s'attend à avoir un résultat car "évolution" est présent dans un texte
-		# self.assertEqual(corpus.makeSearch(enters='intelligence', display=True).shape, (0, 3)) # présent dans les 2 documents donc pas de résultats
-		# self.assertEqual(corpus.makeSearch(enters='angelo', display=True).shape, (0, 3)) # présent dans aucun des documents donc pas de résultats
+		self.assertEqual(len(corpus.makeSearch(enters='évolution', display=True)[1:]), 1)    # On s'attend à avoir un résultat car "évolution" est présent dans un texte
+		self.assertEqual(len(corpus.makeSearch(enters='intelligence', display=True)[1:]), 0) # présent dans les 2 documents donc pas de résultats
+		self.assertEqual(len(corpus.makeSearch(enters='angelo', display=True)[1:]), 0)       # présent dans aucun des documents donc pas de résultats
 
 
 	def test_singleton_sg(self):

@@ -1,19 +1,16 @@
 from Author import Author
+from Document import RedditDocument, ArxivDocument
 from scipy import sparse
 import pandas as pd
 import numpy as np
 import re
 from color_console.coloramaALF import *
+import wordcloud
+import matplotlib.pyplot as plt
+import os
 
-# def singleton(cls):
-# 	instance = [None]
-# 	def wrapper(*args, **kwargs):
-# 		if instance[0] is None:
-# 			instance[0] = cls(*args, **kwargs)
-# 		return instance[0]
-# 	return wrapper
 
-# @singleton
+
 class Corpus():
 	"""
 	Classe Corpus, qui contient beaucoup de métadonnées
@@ -30,18 +27,21 @@ class Corpus():
 		__allInOne [str]            : string contenant TOUT le contenu des documents du corpus
 		__vocadf [pandas.DataFrame] : DataFrame contenant trois colonnes : les mots associés avec leurs occurrences dans le corpus (terFreq) et au nombre de documents où ils sont present (docFreq)
 		__mat_TFxIDF [scipy.sparse.lil_matrix] : matrice TFxIDF du corpus (None tant que la méthode createMatTF n'est pas executée)
+		__savefolder [str]          : nom du dossier pour le contenu sauvegardé
 
 
 	Getters | Setters :
-		get_nom()      | set_nom(nom)
-		get_id2aut()   | *
-		get_id2loc()   | *
-		get_ndoc()     | *
-		get_naut()     | *
-		get_allInOne() | *
-		get_vocadf()   | *
+		get_nom()        | set_nom(nom)
+		get_id2aut()     | *
+		get_id2loc()     | *
+		get_ndoc()       | *
+		get_naut()       | *
+		get_allInOne()   | *
+		get_vocadf()     | *
+		get_savefolder() | *
 
 	Methodes :
+		factoryDocument(doctype, *arg, **kwargs) : Permet de mettre en place le Factory Pattern sur la création des documents
 		addDocument(auteur, document) : Permet d'ajouter un document avec son auteur associé
 		giveDate(self)                : Permet de recuperer deux listes : une avec les ids des docs du corpus, et une avec leur date associée. (Utiliser dans la fonction Corpus.show)
 		show(nbShow)                  : Permet d'afficher les nbShow premier(s) document(s) du corpus
@@ -51,9 +51,10 @@ class Corpus():
 		stats(n)                      :	Permet d'afficher les stats du corpus : le nombre de mots différents, aussi que les n mots les plus récurrents
 		createMatTF()                 : Methode permettant de créer la matrice TFxIDF comme décrite dans la page : https://fr.wikipedia.org/wiki/TF-IDF
 		makeSearch(enters)            : Methode qui cherche, et affiche, les documents les plus interressants par rapport a l'entrée enters
+		makeWCgraph()                 : Permet de créer un graphique wordcloud du contenu du corpus, et de le sauvegarder
 	"""
 
-	def __init__(self, nom):
+	def __init__(self, nom, savefolder='./assets'):
 		self.set_nom(nom)
 		self.__id2aut = {}
 		self.__id2loc = {}
@@ -62,6 +63,7 @@ class Corpus():
 		self.__allInOne = ''
 		self.__vocadf = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]})
 		self.__mat_TFxIDF = None
+		self.__savefolder = savefolder
 
 	def __str__(self):
 		return f"<Corpus {self.get_nom()} | Nb Document(s) : {self.get_ndoc()} | Nb Auteur(s) : {self.get_naut()}>"
@@ -77,12 +79,35 @@ class Corpus():
 	get_naut = lambda self : self.__naut
 	get_allInOne = lambda self : self.__allInOne
 	get_vocadf = lambda self : self.__vocadf
+	get_savefolder = lambda self : self.__savefolder
 	# Les setters :
 	def set_nom(self, enter):
 		if type(enter) == str and len(enter) > 0: 
 			self.__nom = enter
 		else:
 			raise "WARNING Corpus.set_nom : mauvais type"
+
+
+	def factoryDocument(self, doctype, *arg, **kwargs):
+		"""
+		Méthode qui permet de mettre en place le Factory Pattern sur la création des documents
+
+		Param : 
+			- doctype [str] : string qui donne le type de source de document
+			- kwargs [dict] : arguments permettant la créatino des documents
+
+		Return :
+			- Document avec le bon type
+		"""
+
+		if doctype == 'Reddit':
+			return RedditDocument(**kwargs)
+
+		elif doctype == 'Arxiv':
+			return ArxivDocument(**kwargs)
+
+		else:
+			raise 'factoryError'
 
 
 
@@ -142,14 +167,18 @@ class Corpus():
 
 
 
-	def addDocument(self, auteur, document):
+	def addDocument(self, doctype, *arg, **kwargs):
 		"""
 		Permet d'ajouter un document avec son auteur associé
 
 		Paramètres : 
-			- auteur [list] : liste des auteur(s) aillant participé(s) au document
-			- document [Document.Document] : document à ajouter au corpus
+			- doctype [str] : string qui donne le type de source de document
+			- kwargs [dict] : arguments permettant la créatino des documents
 		"""
+
+		document = self.factoryDocument(doctype, **kwargs)
+		auteur = kwargs['auteur']
+
 		self.__id2loc[f"id{len(self.__id2loc.keys())}"] = document
 		self.__ndoc += 1
 		self.__allInOne += document.get_texte()
@@ -364,4 +393,20 @@ class Corpus():
 
 			return returnPP
 
+
+	def makeWCgraph(self):
+		"""
+		Methode qui créer un graphique wordcloud du contenu du corpus
+		"""
+
+		texte = self.get_allInOne()
+		wc = wordcloud.WordCloud(width=1200, height=800, background_color='black', contour_width=0).generate(texte)
+
+		try:
+			os.mkdir(f"{self.get_savefolder()}/image")
+			print(f"{fgreen}INFO : Création dossier {self.get_savefolder()}/image")
+		except:
+			pass
+
+		wc.to_image().save(f"{self.get_savefolder()}/image/{self.get_nom()}_wordcloud.png")
 

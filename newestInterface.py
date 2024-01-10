@@ -1,6 +1,12 @@
 from dash import Dash, dcc, html, Input, Output, callback, dash_table
 import classDash_serv as DashHtml
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 from color_console.coloramaALF import *
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
 
 callInput = [Input(component_id="input1", component_property="value"),       # vals[0]
 	  		 Input(component_id="input2", component_property="value"),       # vals[1]
@@ -12,11 +18,12 @@ callInput = [Input(component_id="input1", component_property="value"),       # v
 	  		 Input(component_id="button3", component_property="n_clicks"),   # vals[7]
 	  		 Input(component_id="table1", component_property="active_cell"), # vals[8]
 	  		 Input(component_id="interv", component_property="n_intervals")] # vals[9]
-callOutput = [Output(component_id="division", component_property="children")]
+callOutput = [Output(component_id="division", component_property="children"), Output("graph1", "figure")]
 
 htmlClass = DashHtml.htmlEvent()
 
-app = Dash(__name__)
+
+app = Dash(__name__, external_stylesheets=["css/all.css"])
 app.layout = html.Div([dcc.Markdown(""" # Projet PAP """, style={'textAlign': 'center'}), 
 	html.Div(htmlClass.div, id='division')],
 	style={'background-color': '#f0f0dd', 'padding-top':'10px', 'padding-bottom':'20px'})
@@ -132,7 +139,7 @@ def chargedMake_Event(*vals):
 					htmlClass.div[-1] = html.P(newchild, style={'color':'#dd0000'})
 
 				htmlClass.div[9] = dcc.Interval(id='interv', interval=400, n_intervals=vals[9])
-				
+
 			else:
 				htmlClass.div[8] = html.Button('Fabriquer un autre corpus', id='button1', n_clicks=htmlClass.value['button1'], style={'margin-top':'10px'})
 				htmlClass.div[9] = dcc.Interval(id='interv', interval=3600*1000, n_intervals=0)
@@ -215,15 +222,17 @@ def chargedMake_Event(*vals):
 					htmlClass.div[5] = html.Div(listeDiv)
 
 
-		if htmlClass.value['input2'] == 'Statistiques':
+		elif htmlClass.value['input2'] == 'Statistiques':
 
 			
 			# Changement de stats
 			if vals[2] != htmlClass.value['input3']:
 
 				htmlClass.value['input3'] = vals[2]
-				htmlClass.value['input4'] = ''
-				htmlClass.value['input5'] = ''
+				htmlClass.value['input4'] = None
+				htmlClass.value['input5'] = None
+
+				if htmlClass.value['input3'] == 'Show first document' : htmlClass.value['input5'] = []
 
 				htmlClass.div = htmlClass.html2()
 
@@ -248,7 +257,11 @@ def chargedMake_Event(*vals):
 						print(f"{flblue}INFO : concorde {htmlClass.value['input4']} for {htmlClass.value['input5']} of context ...{rall}")
 						result = htmlClass.sg.corpus.concorde(htmlClass.value['input4'], contexte=int(htmlClass.value['input5']))
 						htmlClass.div[6] = html.Div([dash_table.DataTable(result.to_dict('records'), [{"name": i, "id": i} for i in result.columns], 
-							id='table1', active_cell=None)])
+							id='table1', active_cell=None,
+							style_cell={'textAlign': 'center'},
+        					style_data_conditional=[{'if': {'column_id': 'contexte droit'}, 'textAlign': 'left'}, 
+        											{'if': {'column_id': 'contexte gauche'}, 'textAlign': 'right'}]
+        					)])
 
 			# Si Stats Mots est selectionné
 			elif htmlClass.value['input3'] == 'Stats Mots':
@@ -300,16 +313,22 @@ def chargedMake_Event(*vals):
 					htmlClass.value['input4'] = vals[3]
 					htmlClass.div[4] = htmlClass.html2()[4]
 
+				if vals[4] != htmlClass.value['input5']:
+					htmlClass.value['input5'] = vals[4]
+					htmlClass.div[5] = htmlClass.html2()[5]
+
 				# Si on clique sur Valider
 				if vals[5] == 1:
 					
 					# On vérifie si le nombre est bien renseigné
 					if htmlClass.value['input4'] not in [None, '']:
 						print(f"{flblue}INFO : show with ({htmlClass.value['input4']}) ...{rall}")
-						result = htmlClass.sg.corpus.show(int(htmlClass.value['input4']), display=True)
+						if len(htmlClass.value['input5']) == 1 : reverse = True
+						else : reverse = False
+						result = htmlClass.sg.corpus.show(int(htmlClass.value['input4']), display=True, reverse=reverse)
 
 						if len(result) <= 2:
-							htmlClass.div[5] = html.P(f"Aucun documents ...", style = {'font-weight':'bold', 'color' : '#ff0000'})
+							htmlClass.div[6] = html.P(f"Aucun documents ...", style = {'font-weight':'bold', 'color' : '#ff0000'})
 						else:
 
 							listeDiv = [html.P(result[0], style = {'font-weight':'bold'}),
@@ -320,10 +339,60 @@ def chargedMake_Event(*vals):
 								divi = [html.P(pi) for pi in res]
 								listeDiv.append(html.Div(divi, style={'background-color':'#E4DD10'}))
 
-							htmlClass.div[5] = html.Div(listeDiv)
+							htmlClass.div[6] = html.Div(listeDiv)
 						
+		elif htmlClass.value['input2'] == 'Analyse':
 
+			# Changement d'analyse
+			if vals[2] != htmlClass.value['input3'] and vals[2] not in [20, 50]:
 
+				htmlClass.value['input3'] = vals[2]
+				htmlClass.div = htmlClass.html2()
+
+				# On choisi notre histogramme du nombre de mots / doc
+				if htmlClass.value['input3'] == 'Histogram sur le nombre de mots par source':
+
+					dico = {}
+
+					for docu in htmlClass.sg.corpus.get_id2loc().values():
+						doctype = docu.get_type().split('Document')[0]
+
+						if doctype not in dico.keys():
+							dico[doctype] = []
+
+						dico[doctype].append(docu.get_size()[1])
+
+					minnb = min([min(dico[key]) for key in dico.keys()])
+					maxnb = max([max(dico[key]) for key in dico.keys()])
+					size  = (maxnb - minnb) / 30
+
+					fig = go.Figure()
+
+					for key, val in dico.items():
+						fig.add_trace(go.Histogram(x=val, name=key, xbins=dict(start=0, end=329, size=size)))
+
+					fig.update_layout(barmode='overlay')
+					fig.update_traces(opacity=0.75)
+
+					htmlClass.fig = fig
+					htmlClass.div[3] = html.Div([dcc.Graph(id=f"graph1")])
+					htmlClass.div[4] = html.Div([])
+
+				# On choisi l'image de mots la
+				elif htmlClass.value['input3'] == 'Image Mots mdr oskour':
+
+					htmlClass.sg.corpus.makeWCgraph()
+					
+					chemin = app.get_asset_url(f"image/{htmlClass.sg.corpus.get_nom()}_wordcloud.png")
+
+					htmlClass.div[3] = html.Div([dcc.Graph(id=f"graph1")], style={'display':'none'})
+					htmlClass.div[4] = html.Div([html.Img(src=chemin, style={'max-width': '100%', 'height': 'auto'})])
+
+				else:
+					print(f"{fred} WARNING : Dans l'event Analyse, l'input radio <{htmlClass.value['input3']}> non reconnu{rall}")
+					print(f"HTML VALUE : ")
+					for key, val in htmlClass.value.items():
+						print(f"{key:7} : {val}")
 
 
 
@@ -333,12 +402,16 @@ def chargedMake_Event(*vals):
 			htmlClass.value['input2'] = ''
 			htmlClass.div = htmlClass.html1()
 
+
 	else:
 
 		print(f"{fred}WARNING : htmlClass.current_html number inconnu [{htmlClass.current_html}] ...{rall}")
 
+	# print('shososososos')
+	# for didi in htmlClass.div:
+	# 	print(didi)
 
-	return htmlClass.div
+	return htmlClass.div, htmlClass.fig
 
 
 

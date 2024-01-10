@@ -2,8 +2,31 @@ from dash import dcc, html, dash_table
 from class_PAP import ScrapingGeneral
 import os
 from color_console.coloramaALF import *
+import pandas as pd
+import plotly.express as px
 
 class htmlEvent():
+	"""
+	Class htmlEvent, qui a deux objectif : 
+	- Donner les composants html pour notre interface Dash
+	- Gérer un objet ScrapingGeneral via un attribut (sg)
+
+	Attributs : 
+		current_html [int]     : (a faire ...)
+		div [list]             : (a faire ...)
+		fig [***]              : (a faire ...)
+		sg [ScrapingGeneral]   : (a faire ...)
+
+	Méthodes : 
+		resetValue
+		giveCorpusName
+		giveHiddens
+		findCorpus
+		chargedCorpus
+		html0
+		html1
+		html2
+	"""
 
 	def __init__(self):
 
@@ -11,15 +34,19 @@ class htmlEvent():
 
 		self.current_html = 0
 		self.div = self.html0()
+
+		df = pd.DataFrame.from_dict({'Aled':['Oskour'], 'mots':[0]})
+		self.fig = px.histogram(df, x="mots")
 		
 		# Création d'un objets scrapingGeneral
 		self.sg = ScrapingGeneral()
 
+
 	def resetValue(self):
 		self.value = {
 			'input1' : '',
-			'input2' : 20,
-			'input3' : 20,
+			'input2' : 50,
+			'input3' : 50, # Ne pas changer 
 			'input4'  : '',
 			'input5'  : None,
 
@@ -55,7 +82,9 @@ class htmlEvent():
 			if "input" in hide:
 				n = hide.split('input')[1]
 				for ni in n:
-					hiddensDiv.append(dcc.Input(id=f"input{ni}", type="hidden", n_submit=1, value=self.value[f"input{ni}"]))
+					if type(self.value[f"input{ni}"]) == list : gvalue = None
+					else : gvalue = self.value[f"input{ni}"]
+					hiddensDiv.append(dcc.Input(id=f"input{ni}", type="hidden", n_submit=1, value=gvalue))
 
 			elif "button" in hide:
 				n = hide.split('button')[1]
@@ -67,6 +96,12 @@ class htmlEvent():
 				for ni in n:
 					hiddensDiv.append(html.Div([dash_table.DataTable([{'None':'None'}], [{"name": i, "id": i} for i in ['None']], id=f"table{ni}", active_cell=None)],
 						style={'display':'none'}))
+
+			elif "graph" in hide:
+				n = hide.split('graph')[1]
+				for ni in n:
+					hiddensDiv.append(html.Div([dcc.Graph(id=f"graph{ni}")], style={'display':'none'}))
+
 			else:
 				hiddensDiv.append(html.P(f"Demande de cacher {hide} [inconnu]", style={'color':'#dd0000'}))
 
@@ -134,7 +169,7 @@ class htmlEvent():
 				dcc.Markdown("""        Tu veux :        """),
 				dcc.RadioItems(['Charger un corpus existant', 'Créer un nouveau corpus'], id="input4", value=self.value['input4']),
 
-				] + self.giveHiddens('input1235', 'button123', 'table1')
+				] + self.giveHiddens('input1235', 'button123', 'table1', 'graph1')
 
 		elif self.value['input4'] == 'Créer un nouveau corpus':
 
@@ -158,7 +193,7 @@ class htmlEvent():
 
 				html.Button('Créer !', id='button1', n_clicks=self.value['button1'], style={'margin-top':'10px'})
 
-				] + self.giveHiddens('input5', 'button23', 'table1')
+				] + self.giveHiddens('input5', 'button23', 'table1', 'graph1')
 
 		else:
 			corpus_dispo, col = self.findCorpus()
@@ -175,7 +210,7 @@ class htmlEvent():
 
 				html.Button(self.giveCorpusName(), id='button2', n_clicks=self.value['button2'], style={'margin-top':'10px'})
 
-				] + self.giveHiddens('input1235', 'button13')
+				] + self.giveHiddens('input1235', 'button13', 'graph1')
 
 
 
@@ -190,7 +225,7 @@ class htmlEvent():
 
 			html.Button('Retour', id='button2', n_clicks=self.value['button2'])
 
-			] + self.giveHiddens('input1345', 'button13', 'table1')
+			] + self.giveHiddens('input1345', 'button13', 'table1', 'graph1')
 
 
 
@@ -212,7 +247,7 @@ class htmlEvent():
 
 				html.Div([html.P('none')], style={'display':'none'})
 
-				] + self.giveHiddens('input1245', 'button3', 'table1')
+				] + self.giveHiddens('input1245', 'button3', 'table1', 'graph1')
 
 
 
@@ -228,7 +263,7 @@ class htmlEvent():
 			# Si on a rien selectionner
 			if self.value['input3'] in ['', None]:
 
-				suite = [html.Button('Retour', id='button2', n_clicks=self.value['button2'])] + self.giveHiddens('input1245', 'button13', 'table1')
+				suite = [html.Button('Retour', id='button2', n_clicks=self.value['button2'])] + self.giveHiddens('input1245', 'button13', 'table1', 'graph1')
 
 
 			# Si on selectionne Concorde
@@ -250,7 +285,7 @@ class htmlEvent():
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
 						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
 
-						] + self.giveHiddens('input12', 'button3')
+						] + self.giveHiddens('input12', 'button3', 'graph1')
 
 
 			# Si on selectionne Stats Mots
@@ -268,7 +303,7 @@ class htmlEvent():
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
 						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
 
-						] + self.giveHiddens('input125', 'button3')
+						] + self.giveHiddens('input125', 'button3', 'graph1')
 
 
 			# Si on selectionne Stats Authors
@@ -285,7 +320,7 @@ class htmlEvent():
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
 						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
 
-						] + self.giveHiddens('input125', 'button3', 'table1')
+						] + self.giveHiddens('input125', 'button3', 'table1', 'graph1')
 
 
 			# Si on selectionne Show first documents
@@ -297,31 +332,37 @@ class htmlEvent():
 							dcc.Input(id="input4", type="number", placeholder="Nombre...", n_submit=1, value=self.value['input4'], min=5, max=50)],
 							style = {'margin-left': '10px', 'display' : 'flex'}),
 
+						dcc.Checklist(['Date dans l\'ordre décroissant'], id='input5', value=self.value['input5']),
+
 						html.P(f"Nom :", style = {'display' : 'none'}),
 
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
 						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
 
-						] + self.giveHiddens('input125', 'button3', 'table1')
+						] + self.giveHiddens('input12', 'button3', 'table1', 'graph1')
 
-
-
+			# return la Div de statistiques
 			return offset + suite
 
+
+		## Event Analyse
 
 		elif self.value['input2'] == 'Analyse':
 
 			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
 
-				dcc.Markdown("""        Analyse :        """),
+				dcc.Markdown("""        Analyse Disponible :        """),
 
-				dcc.Link(f"Lien ?", href="https://dash.plotly.com/datatable"),
+				dcc.RadioItems(['Histogram sur le nombre de mots par source', 'Image Mots mdr oskour'], id="input3", value=self.value['input3']),
+
+				html.Div([dcc.Graph(id=f"graph1")], style={'display':'none'}),
+				html.Div([]),
 
 				html.Br(),
 
 				html.Button('Retour', id='button2', n_clicks=self.value['button2'])
 
-				] + self.giveHiddens('input12345', 'button13', 'table1')
+				] + self.giveHiddens('input1245', 'button13', 'table1')
 
 		else:
 
@@ -331,4 +372,4 @@ class htmlEvent():
 
 				html.Button('Retour', id='button2', n_clicks=self.value['button2'])
 
-				] + self.giveHiddens('input12345', 'button13', 'table1')
+				] + self.giveHiddens('input12345', 'button13', 'table1', 'graph1')

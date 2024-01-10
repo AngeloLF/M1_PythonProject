@@ -68,19 +68,6 @@ class ScrapingGeneral():
 		self.corpus = None
 
 
-
-	def factoryDocument(self, doctype, **kwargs):
-
-		if doctype == 'Reddit':
-			return RedditDocument(**kwargs)
-
-		elif doctype == 'Arxiv':
-			return ArxivDocument(**kwargs)
-
-		else:
-			raise 'factoryError'
-
-
 	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
 		"""
 		Permet de scrap des articles de arxiv et les retourner
@@ -127,8 +114,7 @@ class ScrapingGeneral():
 					category = dic['feed']['entry'][i]['arxiv:primary_category']['@term']
 
 					nb += 1
-					docu = self.factoryDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
-					self.corpus.addDocument(auteur, docu)
+					self.corpus.addDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
 
 		else:
 			print(f"{fred}WARNING : Aucun documents pour la query '{query}'{rall}")
@@ -152,7 +138,7 @@ class ScrapingGeneral():
 			- msg [str] : Message de problèmes si il y en a (None sinon)
 		"""
 
-		reddit = praw.Reddit(client_id='gsfJcIOUGkM8YvJdWR_jWg', client_secret=self.client_secret, user_agent=self.user_agent)
+		reddit = praw.Reddit(client_id=self.client_id, client_secret=self.client_secret, user_agent=self.user_agent)
 		posts = reddit.subreddit(query).hot(limit=nb_docs)
 		nb = 0
 		msg = None
@@ -169,8 +155,7 @@ class ScrapingGeneral():
 				texte = post.selftext.replace('\n', ' ')
 				nb_comment = post.num_comments
 				nb += 1
-				docu = self.factoryDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
-				self.corpus.addDocument(auteur, docu)
+				self.corpus.addDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
 
 		return (nb, msg)
 
