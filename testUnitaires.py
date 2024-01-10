@@ -169,12 +169,12 @@ class TestStringMethods(unittest.TestCase):
 		self.assertEqual(corpus.createMatTF().shape, (2, 146))
   
 		# Méthode makesearch()
-		corpus.makeSearch(enters='évolution', display=False, testUnitaire=True) # affichage
+		corpus.makeSearch(enters='évolution', display=False) # affichage
   
 		# Testons les plusieurs cas pour la méthode makesearch()
-		self.assertEqual(len(corpus.makeSearch(enters='évolution', display=True, testUnitaire=True)[1:]), 1)    # On s'attend à avoir un résultat car "évolution" est présent dans un texte
-		self.assertEqual(len(corpus.makeSearch(enters='intelligence', display=True, testUnitaire=True)[1:]), 0) # présent dans les 2 documents donc pas de résultats
-		self.assertEqual(len(corpus.makeSearch(enters='angelo', display=True, testUnitaire=True)[1:]), 0)       # présent dans aucun des documents donc pas de résultats
+		self.assertEqual(len(corpus.makeSearch(enters='évolution', display=True)[1:]), 1)    # On s'attend à avoir un résultat car "évolution" est présent dans un texte
+		self.assertEqual(len(corpus.makeSearch(enters='intelligence', display=True)[1:]), 0) # présent dans les 2 documents donc pas de résultats
+		self.assertEqual(len(corpus.makeSearch(enters='angelo', display=True)[1:]), 0)       # présent dans aucun des documents donc pas de résultats
 
 
 	def test_singleton_sg(self):
