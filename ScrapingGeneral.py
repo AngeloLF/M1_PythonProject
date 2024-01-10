@@ -2,6 +2,7 @@ import urllib, urllib.request
 import datetime
 import pickle
 import praw
+import wikipedia as wp
 import os
 from color_console.coloramaALF import *
 
@@ -43,7 +44,8 @@ class ScrapingGeneral():
 
 	Méthodes : 
 		scrapReddit(query, nb_docs)          : Permet de scrap des articles de reddit et les retourner
-		scrapArxiv(query, nb_docs, nb_start) : Permet de scrap des articles de arxiv et les retourner
+		scrapArxiv(query, nb_docs)           : Permet de scrap des articles de arxiv et les retourner
+		scrapWiki(query, nb_docs)            : Permet de scrap des articles de wikipedia et les retourner
 		scrap(query, *args, **kwargs)        : Permet de scrap des articles de nature diverses et d'alimenter le corpus
 		save()                               : Permet de save le corpus sous un dataPAP, géré avec Pickle
 		charged()                            : Permet de charger des données déjà faites, présents dans le dossier datafolder
@@ -161,6 +163,47 @@ class ScrapingGeneral():
 		return (nb, msg)
 
 
+	def scrapWiki(self, query, nb_docs=1, limitCarac=20):
+		"""
+		Permet de scrap des articles de wikipedia et les retourner
+
+		Paramètres :
+			query [str]      : thème de la recherche
+			nb_docs [int]    : nombre de document(s) reddit voulu(s)
+			limitCarac [int] : limite de caractère(s) du texte principal pour accepter un document
+
+		Return:
+			- nb [int]  : Nombre de document(s) renvoyé(s) par l'API et gardé(s) pour le corpus
+			- msg [str] : Message de problèmes si il y en a (None sinon)
+		"""
+
+		wp.set_lang('en')
+		pages = wp.search(query, results=nb_docs)
+
+		nb = 0
+		msg = None
+
+		for i in range(nb_docs):
+
+			page = pages[i]
+
+			try:
+				wpage = wp.page(title=page)
+				texte = wpage.summary
+				titre = wpage.title
+				url = wpage.url
+				date = datetime.datetime.now()
+				auteur = ['Wiki Community']
+				self.corpus.addDocument(doctype='Wiki', texte=texte, titre=titre, date=date, auteur=auteur, url=url)
+				nb += 1
+				print(f"{fblue}INFO : Wiki {i+1:3}/{nb_docs}{rall}")
+			except:
+				# Des fois l'API plante pour certaine page
+				pass
+
+		return (nb, msg)
+
+
 	def scrap(self, query, limitCarac=20, *args, **kwargs):
 		"""
 		Permet de scrap des articles de nature diverse et d'alimenter corpus
@@ -191,6 +234,10 @@ class ScrapingGeneral():
 				kwReturns['reddit'] = self.scrapReddit(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
 				print(f"{fgreen}INFO : Sucess to scrap reddit document{rall}")
 
+			elif key in ['wiki', 'wp']:
+				kwReturns['wiki'] = self.scrapWiki(query, nb_docs=int(kwargs[key]), limitCarac=limitCarac)
+				print(f"{fgreen}INFO : Sucess to scrap wikipedia document{rall}")
+
 			else:
 				print(f"{fred}WARNING : the source {key} is not avaible{rall}")
 
@@ -209,6 +256,7 @@ class ScrapingGeneral():
 		nbAuthor = self.corpus.get_naut()
 		nbArxiv = 0
 		nbReddit = 0
+		nbWiki = 0
 		sizeTotal = 0
 
 		for doc in self.corpus.get_id2loc().values():
@@ -216,16 +264,17 @@ class ScrapingGeneral():
 			doctype = doc.get_type()
 			if   doctype == "RedditDocument" : nbReddit += 1
 			elif doctype == "ArxivDocument"  : nbArxiv += 1
+			elif doctype == "WikiDocument"  : nbWiki += 1
 			else : print(f"{fred}WARNING : Dans ScrapingGeneral.save : {doctype} non reconnu{rall}")
 
 			sizeTotal += doc.get_size()[1]
 
-		newinfo = f"{self.corpus.get_nom()}-{nbDocs}-{nbAuthor}-{sizeTotal} mots-{nbArxiv}-{nbReddit}"
+		newinfo = f"{self.corpus.get_nom()}-{nbDocs}-{nbAuthor}-{sizeTotal} mots-{nbArxiv}-{nbReddit}-{nbWiki}"
 
 		if nbDocs > 0:
 
 			if fileinfo not in os.listdir(f"./{self.datafolder}"):
-				lines = [f"Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit", newinfo]
+				lines = [f"Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit-Docs Wiki", newinfo]
 
 			else:
 				with open(f"./{self.datafolder}{fileinfo}", 'r') as f:

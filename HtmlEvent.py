@@ -49,10 +49,10 @@ class htmlEvent():
 		"""
 		self.value = {
 			'input1' : '',
-			'input2' : 50,
-			'input3' : 50, # Ne pas changer 
+			'input2' : 20,
+			'input3' : 20, # Ne pas changer 
 			'input4'  : '',
-			'input5'  : None,
+			'input5'  : 20,
 
 			'button1' : 0,
 			'button2' : 0,
@@ -243,11 +243,15 @@ class htmlEvent():
 				dcc.Input(id="input3", type="number", placeholder="Nb Reddit", n_submit=1, value=self.value['input3'], min=0, max=1000)],
 				style = {'margin-left': '10px', 'display' : 'flex'}),
 
+				html.Div([html.P("Nombre de document Wikipedia voulu :"),
+				dcc.Input(id="input5", type="number", placeholder="Nb Wikipedia", n_submit=1, value=self.value['input5'], min=0, max=100)],
+				style = {'margin-left': '10px', 'display' : 'flex'}),
+
 				html.Br(),
 
 				html.Button('Créer !', id='button1', n_clicks=self.value['button1'], style={'margin-top':'10px'})
 
-				] + self.giveHiddens('input5', 'button23', 'table1', 'graph1')
+				] + self.giveHiddens('button23', 'table1', 'graph1')
 
 		else:
 			corpus_dispo, col = self.findCorpus()

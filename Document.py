@@ -345,4 +345,80 @@ class ArxivDocument(Document):
 					f"Auteur : {', '.join(self.get_auteur())}",
 					f"Source url : {self.get_url()}",
 					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
+
+
+
+
+
+
+
+
+class WikiDocument(Document):
+	"""
+	WikiDocument héritée de Document. Permet de gérer les documents de wikipédia.
+
+	Paramètres d'initialisation :
+		titre [str]              : (héritage Document) titre du document (def '', pas conseillé)
+		auteur [list]            : (héritage Document) auteur(s) du document (def [])
+		date [datetime.datetime] : (héritage Document) date de publication (def: None)
+		url [str]                : (héritage Document) url source du document (def: '')
+		texte [str]              : (héritage Document) contenu textuel du document (def: '', pas conseillé)
+
+	Attributs :
+		__titre [str]              : (héritage Document) titre du document
+		__auteur [list]            : (héritage Document) auteur(s) du document
+		__date [datetime.datetime] : (héritage Document) date de publication
+		__url [str]                : (héritage Document) url source du document
+		__texte [str]              : (héritage Document) contenu textuel du document
+		__voca [dict]              : (héritage Document) dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
+		__size [list]              : (héritage Document) liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
+
+	Getters | Setters :
+		get_titre()    | set_titre(titre)       (héritage Document)
+		get_auteur()   | set_auteur(auteur)     (héritage Document)
+		get_date()     | set_date(date)         (héritage Document)
+		get_url()      | set_url(url)           (héritage Document)
+		get_texte()    | set_texte(texte)       (héritage Document)
+		get_size()     | *                      (héritage Document)
+		get_voca()     | set_statsMots()        (héritage Document)
+		get_type()     | *
+
+	Methode
+		nettoyertexte(text) : (héritage Document) Permet de nettoyer le texte du document
+		info() : Permet d'afficher des infos sur le document (ajout de la catégorie /rapport à Document.info)
+	"""
+
+	def __init__(self, titre='', auteur=[], date='', url='', texte=''):
+		super(WikiDocument, self).__init__(titre, auteur, date, url, texte)
+		self.__type = "WikiDocument"
+
+	def __str__(self):
+		return f"<WikiDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
+
+	def __repr__(self):
+		return f"<WikiDocument | {self.get_titre()} | Auteur : {self.get_auteur()}>"
+
+	# Les getters :
+	get_type = lambda self : self.__type
+
+
+
+	def info(self, display=False):
+		"""
+		Permet d'afficher des infos sur le document
+		"""
+		if not display:
+			print(f"Document :")
+			print(f"\tTitre : {self.get_titre()}")
+			print(f"\tAuteur : {self.get_auteur()}")
+			print(f"\tDate : {self.get_date()}")
+			print(f"\tType : {self.get_type()}")
+			print(f"\tSource url : {self.get_url()}")
+			print(f"\tContenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}\n")
+			return None
+		else:
+			return [f"Titre : {self.get_titre()} | Date : {self.get_date()} | Type : {self.get_type()}",
+					f"Auteur : {', '.join(self.get_auteur())}",
+					f"Source url : {self.get_url()}",
+					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
 	

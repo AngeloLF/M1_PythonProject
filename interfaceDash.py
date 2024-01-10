@@ -63,6 +63,10 @@ def chargedMake_Event(*vals):
 			htmlClass.value['input3'] = vals[2]
 			htmlClass.div[6] = htmlClass.html0()[6]
 
+		# Changement nombre de document wiki
+		if vals[4] != htmlClass.value['input5'] : 
+			htmlClass.value['input5'] = vals[4]
+			htmlClass.div[7] = htmlClass.html0()[7]
 
 		# Selectionne un corpus sur le tableau
 		if vals[8] != htmlClass.value['table1']:
@@ -84,8 +88,8 @@ def chargedMake_Event(*vals):
 					if htmlClass.div[-1].children == "Il faut remplir la query !":
 						htmlClass.div.pop(-1)
 
-					htmlClass.div[8] = html.Button(id='button1', type="hidden", n_clicks=0, style={"display": "none"})
-					htmlClass.div[9] = dcc.Interval(id='interv', interval=400, n_intervals=100)
+					htmlClass.div[9] = html.Button(id='button1', type="hidden", n_clicks=0, style={"display": "none"})
+					htmlClass.div[10] = dcc.Interval(id='interv', interval=400, n_intervals=100)
 
 					htmlClass.div.append(html.P(f"Création du corpus {htmlClass.value['input1']}...", style={'color':'#dd0000'}))
 
@@ -105,7 +109,7 @@ def chargedMake_Event(*vals):
 
 			print(f"{flblue}INFO : Begin scrap...{rall}")
 
-			infoScraping = htmlClass.sg.scrap(htmlClass.value['input1'], arxiv=htmlClass.value['input2'], reddit=htmlClass.value['input3'])
+			infoScraping = htmlClass.sg.scrap(htmlClass.value['input1'], arxiv=htmlClass.value['input2'], reddit=htmlClass.value['input3'], wiki=htmlClass.value['input5'])
 
 			htmlClass.div.pop(-1)
 
@@ -139,11 +143,11 @@ def chargedMake_Event(*vals):
 						newchild = child[0] + htmlClass.value['input1'] + child[1] + '.'
 					htmlClass.div[-1] = html.P(newchild, style={'color':'#dd0000'})
 
-				htmlClass.div[9] = dcc.Interval(id='interv', interval=400, n_intervals=vals[9])
+				htmlClass.div[10] = dcc.Interval(id='interv', interval=400, n_intervals=vals[9])
 
 			else:
-				htmlClass.div[8] = html.Button('Fabriquer un autre corpus', id='button1', n_clicks=htmlClass.value['button1'], style={'margin-top':'10px'})
-				htmlClass.div[9] = dcc.Interval(id='interv', interval=3600*1000, n_intervals=0)
+				htmlClass.div[9] = html.Button('Fabriquer un autre corpus', id='button1', n_clicks=htmlClass.value['button1'], style={'margin-top':'10px'})
+				htmlClass.div[10] = dcc.Interval(id='interv', interval=3600*1000, n_intervals=0)
 
 
 		# Button charger corpus

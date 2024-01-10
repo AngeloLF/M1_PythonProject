@@ -1,5 +1,5 @@
 from Author import Author
-from Document import RedditDocument, ArxivDocument
+from Document import RedditDocument, ArxivDocument, WikiDocument
 from scipy import sparse
 import pandas as pd
 import numpy as np
@@ -116,6 +116,9 @@ class Corpus():
 		elif doctype == 'Arxiv':
 			return ArxivDocument(**kwargs)
 
+		elif doctype == 'Wiki':
+			return WikiDocument(**kwargs)
+
 		else:
 			raise 'factoryError'
 
@@ -170,8 +173,9 @@ class Corpus():
 		xdate = []
 
 		for key, val in self.__id2loc.items():
-			xkeys.append(key)
-			xdate.append(val.get_date())
+			if val.get_type() != 'WikiDocument':
+				xkeys.append(key)
+				xdate.append(val.get_date())
 
 		return xkeys, xdate
 
