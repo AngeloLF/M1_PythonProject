@@ -353,6 +353,15 @@ class Corpus():
 
 		df_tri = self.__vocadf.sort_values(by='term freq.', ascending=False)
 
+		try:
+			# On enlève les stop word
+			df_tri = self.__vocadf[~self.__vocadf['mot'].isin(stopwords.words('english'))].sort_values(by='term freq.', ascending=False)
+		except:
+			# Si on est en testUnitaire sur github
+			pass
+
+
+
 		if not display:
 			print(df_tri[:n].to_string(index=False))
 		else:

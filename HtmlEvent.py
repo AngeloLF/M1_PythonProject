@@ -345,7 +345,7 @@ class htmlEvent():
 							dcc.Input(id="input4", type="text", placeholder="Motif...", n_submit=1, value=self.value['input4'])],
 							style = {'margin-left': '10px', 'display' : 'flex'}),
 
-						html.Div([html.P("Taille :"),
+						html.Div([html.P("Taille du context :"),
 							dcc.Input(id="input5", type="number", placeholder="Taille...", n_submit=1, value=self.value['input5'], min=5, max=50)],
 							style = {'margin-left': '10px', 'display' : 'flex'}),
 
@@ -423,7 +423,7 @@ class htmlEvent():
 
 				dcc.Markdown("""        Analyse Disponible :        """),
 
-				dcc.RadioItems(['Histogram sur le nombre de mots par source', 'Image Wordcloud'], id="input3", value=self.value['input3']),
+				dcc.RadioItems(['Histogramme sur le nombre de mots par source', 'Image Wordcloud'], id="input3", value=self.value['input3']),
 
 				html.Div([dcc.Graph(id=f"graph1")], style={'display':'none'}),
 				html.Div([]),

@@ -372,7 +372,7 @@ def chargedMake_Event(*vals):
 				htmlClass.div = htmlClass.html2()
 
 				# On choisi notre histogramme du nombre de mots / doc
-				if htmlClass.value['input3'] == 'Histogram sur le nombre de mots par source':
+				if htmlClass.value['input3'] == 'Histogramme sur le nombre de mots par source':
 
 					dico = {}
 
@@ -385,13 +385,15 @@ def chargedMake_Event(*vals):
 						dico[doctype].append(docu.get_size()[1])
 
 					minnb = min([min(dico[key]) for key in dico.keys()])
-					maxnb = max([max(dico[key]) for key in dico.keys()])
+					maxnb = min(max([max(dico[key]) for key in dico.keys()]), 400)
+					print(maxnb, minnb)
 					size  = (maxnb - minnb) / 30
+					print(size)
 
 					fig = go.Figure()
 
 					for key, val in dico.items():
-						fig.add_trace(go.Histogram(x=val, name=key, xbins=dict(start=0, end=329, size=size)))
+						fig.add_trace(go.Histogram(x=val, name=key, xbins=dict(start=minnb, end=maxnb, size=size)))
 
 					fig.update_layout(barmode='overlay')
 					fig.update_traces(opacity=0.75)
