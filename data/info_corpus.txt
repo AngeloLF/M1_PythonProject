@@ -1,7 +1,3 @@
 Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit
-astrophysics-98-119-7996 mots-50-48
-moon-59-108-9328 mots-50-9
-cat-60-119-5105 mots-50-10
-python-40-77-5285 mots-20-20
-neutron_star-50-124-7058 mots-50-0
-oui-50-45-6523 mots-50-0
+astrophysics-191-261-19311 mots-100-91
+moon-122-233-18095 mots-100-22

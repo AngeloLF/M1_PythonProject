@@ -419,7 +419,7 @@ class htmlEvent():
 
 				dcc.Markdown("""        Analyse Disponible :        """),
 
-				dcc.RadioItems(['Histogram sur le nombre de mots par source', 'Image Mots mdr oskour'], id="input3", value=self.value['input3']),
+				dcc.RadioItems(['Histogram sur le nombre de mots par source', 'Image Wordcloud'], id="input3", value=self.value['input3']),
 
 				html.Div([dcc.Graph(id=f"graph1")], style={'display':'none'}),
 				html.Div([]),

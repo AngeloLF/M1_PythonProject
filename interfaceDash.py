@@ -315,7 +315,7 @@ def chargedMake_Event(*vals):
 							htmlClass.div[5] = html.Div([html.P(f"Pour l'auteur {result[0]} :", style={'font-weight':'bold'}),
 								html.P(f" - Nombre de document(s) rédigé(s) : {int(result[1])}"),
 								html.P(f" - Moyenne de mots/document(s) : {int(result[2])}")],
-								style = {'color' : '#00dd00', 'background-color':'#81FF8D'})
+								style = {'color' : '#000000', 'background-color':'#F5EA57'})
 
 			# Si Show first documents est selectionné
 			elif htmlClass.value['input3'] == 'Show first document':
@@ -397,7 +397,7 @@ def chargedMake_Event(*vals):
 					htmlClass.div[4] = html.Div([])
 
 				# On choisi l'image de mots la
-				elif htmlClass.value['input3'] == 'Image Mots mdr oskour':
+				elif htmlClass.value['input3'] == 'Image Wordcloud':
 
 					htmlClass.sg.corpus.makeWCgraph()
 					
