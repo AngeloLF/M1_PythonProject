@@ -6,8 +6,6 @@ import os
 from color_console.coloramaALF import *
 
 import func_PAP
-from Document import *
-from Author import *
 from Corpus import *
 
 def singleton(cls):
@@ -68,7 +66,7 @@ class ScrapingGeneral():
 		self.corpus = None
 
 
-	def scrapArxiv(self, query, nb_docs, nb_start=0, limitCarac=20):
+	def scrapArxiv(self, query, nb_docs, limitCarac=20):
 		"""
 		Permet de scrap des articles de arxiv et les retourner
 
@@ -83,8 +81,7 @@ class ScrapingGeneral():
 			- msg [str] : Message de problèmes si il y en a (None sinon) 
 		"""
 
-		url = self.url0_arxiv + 'search_query=all:{}&start={}&max_results={}'.format(query, nb_start, nb_docs)
-		
+		url = self.url0_arxiv + f"search_query=all:{'+'.join(query.split(' '))}&start=0&max_results={nb_docs}"
 
 		request = urllib.request.urlopen(url).read().decode('utf-8')
 		dic = func_PAP.xmlto(request)
@@ -117,7 +114,7 @@ class ScrapingGeneral():
 					self.corpus.addDocument(doctype='Arxiv', texte=texte, titre=titre, date=date, auteur=auteur, url=url, category=category)
 
 		else:
-			print(f"{fred}WARNING : Aucun documents pour la query '{query}'{rall}")
+			print(f"{fred}WARNING : ScrapingGeneral.scrapArxiv : Aucun documents pour la query '{query}'{rall}")
 			msg = 'L\'API n\'a pas renvoyé de résultat'
 
 		return (nb, msg)
@@ -143,19 +140,23 @@ class ScrapingGeneral():
 		nb = 0
 		msg = None
 
-		for post in posts:
-			if len(post.selftext.replace('\n', ' ')) > limitCarac:
-				if post.author == None:
-					auteur = ['Anonym']
-				else:
-					auteur = [post.author.name]
-				date = datetime.datetime.utcfromtimestamp(post.created_utc)
-				url = post.permalink
-				titre = post.title
-				texte = post.selftext.replace('\n', ' ')
-				nb_comment = post.num_comments
-				nb += 1
-				self.corpus.addDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
+		try:
+			for post in posts:
+				if len(post.selftext.replace('\n', ' ')) > limitCarac:
+					if post.author == None:
+						auteur = ['Anonym']
+					else:
+						auteur = [post.author.name]
+					date = datetime.datetime.utcfromtimestamp(post.created_utc)
+					url = post.permalink
+					titre = post.title
+					texte = post.selftext.replace('\n', ' ')
+					nb_comment = post.num_comments
+					nb += 1
+					self.corpus.addDocument(doctype='Reddit', texte=texte, titre=titre, date=date, auteur=auteur, url=url, nb_comment=nb_comment)
+		except:
+			print(f"{fred}WARNING : ScrapingGeneral.scrapReddit : Aucun documents pour la query '{query}'{rall}")
+			msg = 'L\'API n\'a pas renvoyé de résultat'
 
 		return (nb, msg)
 
@@ -174,7 +175,9 @@ class ScrapingGeneral():
 			- kwReturns [dict] : Dictionnaire contenant des informations sur le déroulement du scraping
 		"""
 
-		self.corpus = Corpus(query)
+		query = query.lower()
+
+		self.corpus = Corpus(query.replace(' ', '_'))
 
 		kwReturns = {}
 

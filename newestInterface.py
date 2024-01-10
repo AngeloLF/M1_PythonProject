@@ -1,12 +1,7 @@
 from dash import Dash, dcc, html, Input, Output, callback, dash_table
 import classDash_serv as DashHtml
-import numpy as np
-import plotly.express as px
 import plotly.graph_objects as go
 from color_console.coloramaALF import *
-import pandas as pd
-import matplotlib.pyplot as plt
-import os
 
 callInput = [Input(component_id="input1", component_property="value"),       # vals[0]
 	  		 Input(component_id="input2", component_property="value"),       # vals[1]
@@ -119,7 +114,7 @@ def chargedMake_Event(*vals):
 				if msg is None:
 					htmlClass.div.append(html.P(f"Nombre de document {key} récupéré(s) : {nb}", style={'color':'#00dd00'}))
 				else:
-					htmlClass.div.append(html.P(f"Erreur pour {key} : {msg}", style={'color':'#dd0000'}))
+					htmlClass.div.append(html.P(f"Pour {key} : {msg}", style={'color':'#dd0000'}))
 
 			htmlClass.sg.save()
 			htmlClass.div.append(html.P(f"Corpus sauvegardé !", style={'font-weight': 'bold', 'color':'#00dd00'}))
@@ -256,7 +251,7 @@ def chargedMake_Event(*vals):
 					if htmlClass.value['input4'] not in [None, ''] and htmlClass.value['input5'] not in [None, '']:
 						print(f"{flblue}INFO : concorde {htmlClass.value['input4']} for {htmlClass.value['input5']} of context ...{rall}")
 						result = htmlClass.sg.corpus.concorde(htmlClass.value['input4'], contexte=int(htmlClass.value['input5']))
-						htmlClass.div[6] = html.Div([dash_table.DataTable(result.to_dict('records'), [{"name": i, "id": i} for i in result.columns], 
+						htmlClass.div[8] = html.Div([dash_table.DataTable(result.to_dict('records'), [{"name": i, "id": i} for i in result.columns], 
 							id='table1', active_cell=None,
 							style_cell={'textAlign': 'center'},
         					style_data_conditional=[{'if': {'column_id': 'contexte droit'}, 'textAlign': 'left'}, 
@@ -278,7 +273,7 @@ def chargedMake_Event(*vals):
 					if htmlClass.value['input4'] not in [None, '']:
 						print(f"{flblue}INFO : stats mots ({htmlClass.value['input4']}) ...{rall}")
 						result = htmlClass.sg.corpus.stats(int(htmlClass.value['input4']), display=True)
-						htmlClass.div[5] = html.Div([dash_table.DataTable(result.to_dict('records'), [{"name": i, "id": i} for i in result.columns], 
+						htmlClass.div[7] = html.Div([dash_table.DataTable(result.to_dict('records'), [{"name": i, "id": i} for i in result.columns], 
 							id='table1', active_cell=None)])
 
 			# Si Stats Authors est selectionné
@@ -298,12 +293,23 @@ def chargedMake_Event(*vals):
 						result = htmlClass.sg.corpus.statAuthor(htmlClass.value['input4'])
 
 						if result[1] == 0:
-							htmlClass.div[5] = html.P(f"Aucun resultat pour {result[0]}", style = {'font-weight':'bold', 'color' : '#ff0000'})
+
+							listeDiv = [html.P(f"Aucun resultat pour {htmlClass.value['input4']}", style = {'font-weight':'bold', 'color' : '#ff0000'})]
+
+							if len(result[0]) > 0:
+
+								listeDiv.append(html.P(f"Vous voulez peut-être dire :", style = {'font-weight':'bold'}))
+
+								for name in result[0]:
+									listeDiv.append(html.P(f"- {name}"))
+
+							htmlClass.div[5] = html.Div(listeDiv, style={'background-color':'#FF8D8D'})
+
 						else:
 							htmlClass.div[5] = html.Div([html.P(f"Pour l'auteur {result[0]} :", style={'font-weight':'bold'}),
 								html.P(f" - Nombre de document(s) rédigé(s) : {int(result[1])}"),
 								html.P(f" - Moyenne de mots/document(s) : {int(result[2])}")],
-								style = {'color' : '#00dd00'})
+								style = {'color' : '#00dd00', 'background-color':'#81FF8D'})
 
 			# Si Show first documents est selectionné
 			elif htmlClass.value['input3'] == 'Show first document':
@@ -328,7 +334,7 @@ def chargedMake_Event(*vals):
 						result = htmlClass.sg.corpus.show(int(htmlClass.value['input4']), display=True, reverse=reverse)
 
 						if len(result) <= 2:
-							htmlClass.div[6] = html.P(f"Aucun documents ...", style = {'font-weight':'bold', 'color' : '#ff0000'})
+							htmlClass.div[8] = html.P(f"Aucun documents ...", style = {'font-weight':'bold', 'color' : '#ff0000'})
 						else:
 
 							listeDiv = [html.P(result[0], style = {'font-weight':'bold'}),
@@ -336,10 +342,16 @@ def chargedMake_Event(*vals):
 
 							for res in result[2:]:
 
-								divi = [html.P(pi) for pi in res]
+								divi = []
+								for pi in res:
+									if 'Source url : ' not in pi:
+										divi.append(html.P(pi))
+									else:
+										divi.append(dcc.Link(f"{pi}", href=f"{pi[13:]}"))
+										
 								listeDiv.append(html.Div(divi, style={'background-color':'#E4DD10'}))
 
-							htmlClass.div[6] = html.Div(listeDiv)
+							htmlClass.div[8] = html.Div(listeDiv)
 						
 		elif htmlClass.value['input2'] == 'Analyse':
 
@@ -406,10 +418,6 @@ def chargedMake_Event(*vals):
 	else:
 
 		print(f"{fred}WARNING : htmlClass.current_html number inconnu [{htmlClass.current_html}] ...{rall}")
-
-	# print('shososososos')
-	# for didi in htmlClass.div:
-	# 	print(didi)
 
 	return htmlClass.div, htmlClass.fig
 

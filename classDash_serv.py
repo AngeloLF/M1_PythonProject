@@ -12,20 +12,21 @@ class htmlEvent():
 	- Gérer un objet ScrapingGeneral via un attribut (sg)
 
 	Attributs : 
-		current_html [int]     : (a faire ...)
-		div [list]             : (a faire ...)
-		fig [***]              : (a faire ...)
-		sg [ScrapingGeneral]   : (a faire ...)
+		current_html [int]                     : Page html en cours (0, 1 ou 2)
+		div [list]                             : Attribut contenant les composants html de notre interface
+		fig [plotly.graph_objs._figure.Figure] : figure en cours
+		sg [ScrapingGeneral]                   : Object ScrapingGeneral utiliser dans notre interface
+		value [dict]                           : DIctionnaire contenant les valeurs des inputs
 
 	Méthodes : 
-		resetValue
-		giveCorpusName
-		giveHiddens
-		findCorpus
-		chargedCorpus
-		html0
-		html1
-		html2
+		resetValue()                     : Permet de reset le dict value
+		giveCorpusName(folder, fileinfo) : Permet de return une composante P html contenant le nom du corpus selectionné
+		giveHiddens(*hiddens)            : Permet de renvoyer une liste contenant les divs à cacher. 
+		findCorpus(folder, fileinfo)     : Permet de chercher les infos des corpus présent dans data. Il retourne les infos récuperé
+		chargedCorpus(folder, fileinfo)  : Permet de charger un corpus
+		html0()                          : Permet de retourner les composantes de la page html 0
+		html1()                          : Permet de retourner les composantes de la page html 1
+		html2()                          : Permet de retourner les composantes de la page html 2
 	"""
 
 	def __init__(self):
@@ -37,12 +38,17 @@ class htmlEvent():
 
 		df = pd.DataFrame.from_dict({'Aled':['Oskour'], 'mots':[0]})
 		self.fig = px.histogram(df, x="mots")
+
+		print(type(self.fig))
 		
 		# Création d'un objets scrapingGeneral
 		self.sg = ScrapingGeneral()
 
 
 	def resetValue(self):
+		"""
+		Méthode qui permet de reset le dict value
+		"""
 		self.value = {
 			'input1' : '',
 			'input2' : 50,
@@ -59,6 +65,17 @@ class htmlEvent():
 
 
 	def giveCorpusName(self, folder='data', fileinfo='info_corpus.txt'):
+		"""
+		Méthode qui permet de return une composante P html contenant le nom du corpus selectionné.
+		Il créer aussi un fichier update contenant des infos des corpus, mais sans ceux qu'ils ne trouve pas dans data
+
+		Param :
+			- folder [str]   : Emplacement des corpus
+			- fileinfo [str] : Nom du fichier contenant les infos sur les corpus
+
+		Return : 
+			- [html.P()] : Composante P html
+		"""
 
 		if self.value['table1'] is None:
 			
@@ -73,6 +90,18 @@ class htmlEvent():
 
 
 	def giveHiddens(self, *hiddens):
+		"""
+		Méthode qui permet de renvoyer une liste contenant les divs à cacher. 
+		On fait cela car tout les ids des callInput doivent être présent à tout moments. 
+		-> Donc si ils ne sont pas utilisés, il faut les ajouter en les placant invisible (type=hidden ou display : none)
+	
+		Param : 
+			- *hiddens [str] : les ids à cacher (exemple, pour cacher input1, input 2 et button1 : giveHiddens('input12', 'button1'))
+
+		Return :
+			- hiddensDiv [list] : liste des composants à cacher
+		"""
+
 
 		hiddensDiv = []
 
@@ -109,7 +138,18 @@ class htmlEvent():
 
 
 	def findCorpus(self, folder='data', fileinfo='info_corpus.txt'):
+		"""
+		Méthode qui permet de chercher les infos des corpus présent dans data. Il retourne les infos récuperé
 
+		Param :
+			- folder [str]   : Emplacement des corpus
+			- fileinfo [str] : Nom du fichier contenant les infos sur les corpus
+
+		Return : 
+			- data [list] : liste contenant les informations des corpus
+			- col [list]  : liste contenant les labels des colonne des informations
+		"""
+		
 		data = []
 
 		with open(f"./{folder}/{fileinfo}", 'r') as f:
@@ -147,6 +187,16 @@ class htmlEvent():
 
 
 	def chargedCorpus(self, folder='data', fileinfo='info_corpus.txt'):
+		"""
+		Méthode qui permet de charger un corpus
+
+		Param :
+			- folder [str]   : Emplacement des corpus
+			- fileinfo [str] : Nom du fichier contenant les infos sur les corpus
+
+		Return : 
+			- name [str] : nom du corpus chargé
+		"""
 
 		row = self.value['table1']['row']
 		with open(f"./{folder}/update_{fileinfo}", 'r') as f:
@@ -161,6 +211,12 @@ class htmlEvent():
 
 
 	def html0(self):
+		"""
+		Méthode qui permet de retourner les composantes de la page html 0
+
+		Return :
+			[list] : liste des composantes à retouner pour l'interface Dash
+		"""
 
 		if self.value['input4'] == '':
 
@@ -217,8 +273,14 @@ class htmlEvent():
 
 
 	def html1(self):
+		"""
+		Méthode qui permet de retourner les composantes de la page html 0
 
-		return [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
+		Return :
+			[list] : liste des composantes à retouner pour l'interface Dash
+		"""
+
+		return [dcc.Markdown(f"""        ## Pour la query {self.value['input1'].replace('_', ' ')}       """),
 
 			dcc.Markdown("""        Qu'est ce que tu veux faire :        """),
 			dcc.RadioItems(['Faire une recherche', 'Statistiques', 'Analyse'], id="input2", value=self.value['input2']),	
@@ -232,12 +294,18 @@ class htmlEvent():
 
 
 	def html2(self):
+		"""
+		Méthode qui permet de retourner les composantes de la page html 0
+
+		Return :
+			[list] : liste des composantes à retouner pour l'interface Dash
+		"""
 
 		## Event Faire une recherche
 
 		if self.value['input2'] == 'Faire une recherche':
 			
-			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
+			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1'].replace('_', ' ')}       """),
 
 				dcc.Markdown("""        Choix de recherche :        """),
 				dcc.Input(id="input3", type="text", placeholder="Recherche...", n_submit=1, value=self.value['input3']),
@@ -255,7 +323,7 @@ class htmlEvent():
 
 		elif self.value['input2'] == 'Statistiques':
 
-			offset = [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
+			offset = [dcc.Markdown(f"""        ## Pour la query {self.value['input1'].replace('_', ' ')}       """),
 					  dcc.Markdown("""        Statistiques :        """),
 					  dcc.Dropdown(['Show first document', 'Stats Authors', 'Concorde', 'Stats Mots'], value=self.value['input3'], id='input3')]
 
@@ -279,11 +347,11 @@ class htmlEvent():
 							dcc.Input(id="input5", type="number", placeholder="Taille...", n_submit=1, value=self.value['input5'], min=5, max=50)],
 							style = {'margin-left': '10px', 'display' : 'flex'}),
 
-						html.Div([dash_table.DataTable([{'None':'None'}], [{"name": i, "id": i} for i in ['None']], id='table1', active_cell=None)],
-							style={'display':'none'}),
-
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
-						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
+						html.Button('Valider', id='button1', n_clicks=self.value['button1']),
+
+						html.Div([dash_table.DataTable([{'None':'None'}], [{"name": i, "id": i} for i in ['None']], id='table1', active_cell=None)],
+							style={'display':'none'})
 
 						] + self.giveHiddens('input12', 'button3', 'graph1')
 
@@ -297,11 +365,11 @@ class htmlEvent():
 							dcc.Input(id="input4", type="number", placeholder="Nombre...", n_submit=1, value=self.value['input4'], min=5, max=100)],
 							style = {'margin-left': '10px', 'display' : 'flex'}),
 
-						html.Div([dash_table.DataTable([{'None':'None'}], [{"name": i, "id": i} for i in ['None']], id='table1', active_cell=None)],
-							style={'display':'none'}),
-
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
-						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
+						html.Button('Valider', id='button1', n_clicks=self.value['button1']),
+
+						html.Div([dash_table.DataTable([{'None':'None'}], [{"name": i, "id": i} for i in ['None']], id='table1', active_cell=None)],
+							style={'display':'none'})
 
 						] + self.giveHiddens('input125', 'button3', 'graph1')
 
@@ -334,10 +402,10 @@ class htmlEvent():
 
 						dcc.Checklist(['Date dans l\'ordre décroissant'], id='input5', value=self.value['input5']),
 
-						html.P(f"Nom :", style = {'display' : 'none'}),
-
 						html.Button('Retour', id='button2', n_clicks=self.value['button2']),
-						html.Button('Valider', id='button1', n_clicks=self.value['button1'])
+						html.Button('Valider', id='button1', n_clicks=self.value['button1']),
+
+						html.P(f"Nom :", style = {'display' : 'none'})
 
 						] + self.giveHiddens('input12', 'button3', 'table1', 'graph1')
 
@@ -349,7 +417,7 @@ class htmlEvent():
 
 		elif self.value['input2'] == 'Analyse':
 
-			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
+			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1'].replace('_', ' ')}       """),
 
 				dcc.Markdown("""        Analyse Disponible :        """),
 
@@ -366,7 +434,7 @@ class htmlEvent():
 
 		else:
 
-			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1']}       """),
+			return [dcc.Markdown(f"""        ## Pour la query {self.value['input1'].replace('_', ' ')}       """),
 
 				dcc.Markdown("""        Page Inconnu :        """),
 

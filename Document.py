@@ -138,7 +138,7 @@ class Document():
 			return None
 		else:
 			return [f"Titre : {self.__titre} | Date : {self.__date}",
-					f"Auteur : {self.__auteur}",
+					f"Auteur : {', '.join(self.__auteur)}",
 					f"Source url : {self.__url}",
 					f"Contenu : [{self.__size[0]} carac. | {self.__size[1]} word | {self.__size[2]} sent.]\n{self.__texte}\n"]
 
@@ -225,8 +225,8 @@ class RedditDocument(Document):
 			return None
 		else:
 			return [f"Titre : {self.get_titre()} | Date : {self.get_date()} | Type : {self.get_type()}",
-					f"Auteur : {self.get_auteur()} | Nb comment : {self.__nb_comment}",
-					f"Source url : {self.get_url()}",
+					f"Auteur : {', '.join(self.get_auteur())} | Nb comment : {self.__nb_comment}",
+					f"Source url : https://www.reddit.com{self.get_url()}",
 					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
 
 
@@ -313,7 +313,7 @@ class ArxivDocument(Document):
 			return None
 		else:
 			return [f"Titre : {self.get_titre()} | Date : {self.get_date()} | Type : {self.get_type()}",
-					f"Auteur : {self.get_auteur()}",
+					f"Auteur : {', '.join(self.get_auteur())}",
 					f"Source url : {self.get_url()}",
 					f"Contenu : [{self.get_size()[0]} carac. | {self.get_size()[1]} word | {self.get_size()[2]} sent.]\n{self.get_texte()}"]
 	

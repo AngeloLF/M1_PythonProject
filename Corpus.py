@@ -6,7 +6,6 @@ import numpy as np
 import re
 from color_console.coloramaALF import *
 import wordcloud
-import matplotlib.pyplot as plt
 import os
 
 
@@ -212,15 +211,58 @@ class Corpus():
 			- authorName [str] : nom de l'auteur pour obtenir ses stats
 
 		Return :
-			- name [str]      : nom de l'auteur
-			- ndoc [int]      : nombre de documents écrits par l'auteur
-			- sizedoc [float] : taille moyenne (en mots) des documents de l'auteur
+			- name [str]      : nom de l'auteur (si il est trouvé, une liste de noms proches sinon)
+			- ndoc [int]      : nombre de documents écrits par l'auteur (si il est trouvé, 0 sinon)
+			- sizedoc [float] : taille moyenne (en mots) des documents de l'auteur (si il est trouvé, 0 sinon)
 		"""
 		if authorName in self.__id2aut.keys():
 			return self.__id2aut[authorName].stats()
 		else:
 			print(f"{fyellow}INFO : {authorName} inconnu{rall}")
-			return authorName, 0, 0
+
+			# L'auteur n'est pas trouvé, on va essayer de trouver des nom qui ressemble...
+
+			score = []
+			autho = []
+
+			# On va calculer un score en fonction de la correspondance avec 3-gramme et 4-gramme
+			trigram = [authorName.lower()[i:i+3] for i in range(len(authorName)-2)]
+			quagram = [authorName.lower()[i:i+4] for i in range(len(authorName)-3)]
+
+			for name in self.__id2aut.keys():
+
+				lowername = name.lower()
+
+				scorei = 0
+
+				for tri in trigram:
+					if tri in name:
+						scorei += 2
+				for qua in quagram:
+					if qua in name:
+						scorei += 5
+
+				if scorei > 0:
+					score.append(scorei)
+					autho.append(name)
+
+			retenu = []
+
+			# On selectionne les (au maximum si ils existent) 3 plus grands scores
+			for i in range(3):
+
+				if len(score) > 0:
+					ind = score.index(max(score))
+					retenu.append(autho[ind])
+					score.pop(ind)
+					autho.pop(ind)
+
+			if len(retenu) > 0:
+				print(f"{fgreen}INFO : les {len(retenu)} auteur(s) les plus 'proche' de {authorName} sont retenu(s){rall}")
+			else:
+				print(f"{fyellow}INFO : pas d'auteur proche retenu{rall}")
+
+			return retenu, 0, 0
 
 
 	
@@ -400,7 +442,7 @@ class Corpus():
 		"""
 
 		texte = self.get_allInOne()
-		wc = wordcloud.WordCloud(width=1200, height=800, background_color='black', contour_width=0).generate(texte)
+		wc = wordcloud.WordCloud(width=900, height=600, background_color='black', contour_width=0).generate(texte)
 
 		try:
 			os.mkdir(f"{self.get_savefolder()}/image")
