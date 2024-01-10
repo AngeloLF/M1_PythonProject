@@ -31,9 +31,9 @@ jobs:
         pip install scipy
         pip install wordcloud
         pip install nltk
-        nltk.download('punkt')
     - name: Run tests and generate HTML report
       run: |
+        nltk.download('punkt')
         pytest testUnitaires.py
       env:
         CI: true
