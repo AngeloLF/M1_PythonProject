@@ -29,6 +29,7 @@ jobs:
         pip install xmltodict
         pip install numpy
         pip install scipy
+        pip install wordcloud
     - name: Run tests and generate HTML report
       run: |
         pytest testUnitaires.py
