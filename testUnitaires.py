@@ -1,6 +1,6 @@
 import unittest
 import os
-from class_PAP import ScrapingGeneral
+from ScrapingGeneral import ScrapingGeneral
 import Document
 import Corpus
 import Author
