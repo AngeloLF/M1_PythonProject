@@ -8,6 +8,11 @@ from color_console.coloramaALF import *
 import wordcloud
 import os
 
+# Ajout racinisation
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
+
 
 
 class Corpus():
@@ -25,9 +30,11 @@ class Corpus():
 		__naut [int]                : nombre d'auteurs
 		__allInOne [str]            : string contenant TOUT le contenu des documents du corpus
 		__vocadf [pandas.DataFrame] : DataFrame contenant trois colonnes : les mots associés avec leurs occurrences dans le corpus (terFreq) et au nombre de documents où ils sont present (docFreq)
-		__mat_TFxIDF [scipy.sparse.lil_matrix] : matrice TFxIDF du corpus (None tant que la méthode createMatTF n'est pas executée)
+		__vocasn [pandas.DataFrame] : Identique a __vocasn, mais avec racinisation les mots
+		__mat_TFxIDF [scipy.sparse.lil_matrix]    : matrice TFxIDF du corpus (None tant que la méthode createMatTF n'est pas executée)
+		__mat_TFxIDF_SN [scipy.sparse.lil_matrix] : matrice TFxIDF du corpus avec racinisation des mots (None tant que la méthode createMatTF n'est pas executée)
 		__savefolder [str]          : nom du dossier pour le contenu sauvegardé
-
+		
 
 	Getters | Setters :
 		get_nom()        | set_nom(nom)
@@ -37,6 +44,7 @@ class Corpus():
 		get_naut()       | *
 		get_allInOne()   | *
 		get_vocadf()     | *
+		get_vocasn()     | *
 		get_savefolder() | *
 
 	Methodes :
@@ -61,7 +69,9 @@ class Corpus():
 		self.__naut = 0
 		self.__allInOne = ''
 		self.__vocadf = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]})
+		self.__vocasn = pd.DataFrame.from_dict({'mot':[], 'term freq.':[], 'document freq.':[]}) # Ajout racinisation
 		self.__mat_TFxIDF = None
+		self.__mat_TFxIDF_SN = None # Ajout racinisation
 		self.__savefolder = savefolder
 
 	def __str__(self):
@@ -78,6 +88,7 @@ class Corpus():
 	get_naut = lambda self : self.__naut
 	get_allInOne = lambda self : self.__allInOne
 	get_vocadf = lambda self : self.__vocadf
+	get_vocasn = lambda self : self.__vocasn # Ajout racinisation
 	get_savefolder = lambda self : self.__savefolder
 	# Les setters :
 	def set_nom(self, enter):
@@ -191,6 +202,17 @@ class Corpus():
 			else:
 				self.__vocadf.loc[self.__vocadf['mot'] == mot, 'term freq.'] += recu
 				self.__vocadf.loc[self.__vocadf['mot'] == mot, 'document freq.'] += 1
+
+		# Ajout racinisation
+		for mot, recu in document.get_vocasn().items():
+
+			if mot not in list(self.__vocasn['mot']):
+				new = {'mot':[mot], 'term freq.':[recu], 'document freq.':[1]}
+				self.__vocasn = pd.merge(self.__vocasn, pd.DataFrame.from_dict(new), how='outer')
+
+			else:
+				self.__vocasn.loc[self.__vocasn['mot'] == mot, 'term freq.'] += recu
+				self.__vocasn.loc[self.__vocasn['mot'] == mot, 'document freq.'] += 1
 
 
 		for auteur_i in auteur:
@@ -358,12 +380,34 @@ class Corpus():
 				mat_TFxIDF[int(iddoc[2:]), mots.index(mot)] = TF/nbmot * np.log(ndoc/p)
 
 		self.__mat_TFxIDF = mat_TFxIDF
+		print(f"{fgreen}INFO : création Matrice TFxIDF{rall}")
+
+
+
+		# Ajout racinisation
+		ndoc = self.__ndoc
+		nmot = len(self.__vocasn['mot'])
+
+		mots = list(self.__vocasn['mot'])
+		mots.sort()
+
+		mat_TFxIDF_SN = sparse.lil_matrix((ndoc, nmot)).astype(float)
+		
+		for iddoc, val in self.__id2loc.items():
+			nbmot = len(val.get_vocasn().keys())
+
+			for mot, TF in val.get_vocasn().items():
+				p = self.__vocasn.loc[self.__vocasn['mot'] == mot, 'document freq.'].values[0]
+				mat_TFxIDF_SN[int(iddoc[2:]), mots.index(mot)] = TF/nbmot * np.log(ndoc/p)
+
+		self.__mat_TFxIDF_SN = mat_TFxIDF_SN
+		print(f"{fgreen}INFO : création Matrice TFxIDF_SN [avec racinisation des mots]{rall}")
 
 		return mat_TFxIDF
 
 
 
-	def makeSearch(self, enters, display=False):
+	def makeSearch(self, enters, display=False, testUnitaire=False):
 		"""
 		Methode qui cherche, et affiche, les documents les plus interressants par rapport a l'entrée `enters`
 
@@ -374,13 +418,30 @@ class Corpus():
 			- returnPP [list] : list contenant les résultats si display est True
 		"""
 
-		ndoc = self.__ndoc
-		nmot = len(self.__vocadf['mot'])
-		mots = list(self.__vocadf['mot'])
-		mots.sort()
+		if testUnitaire:
+			# Ancien calcul
+			ndoc = self.__ndoc
+			nmot = len(self.__vocadf['mot'])
+			mots = list(self.__vocadf['mot'])
+			mots.sort()
 
-		enter = enters.lower().split(" ")
-		vectEnter = np.zeros(nmot).astype(int)
+			enter = enters.lower().split(" ")
+			vectEnter = np.zeros(nmot).astype(int)
+
+		else:
+			# Ajout racinisation
+			ndoc = self.__ndoc
+			nmot = len(self.__vocasn['mot'])
+			mots = list(self.__vocasn['mot'])
+			mots.sort()
+
+			stemmer = SnowballStemmer(language='english')
+			data0 = re.sub(r'[^\w\s]', ' ', enters.lower()) # On laisse que les carac alphanum
+			enter = [stemmer.stem(token) for token in word_tokenize(data0) if token not in stopwords.words('english') and len(token) > 1]
+			vectEnter = np.zeros(nmot).astype(int)
+
+
+
 
 		nbmot = len(enter)
 
@@ -390,11 +451,15 @@ class Corpus():
 			else:
 				print(f"{fyellow}INFO : il n'y a pas {mot} rechercher dans le corpus{rall}")
 
-		if self.__mat_TFxIDF is None:
+		if self.__mat_TFxIDF is None or self.__mat_TFxIDF_SN is None: 
 			self.createMatTF()
-			print(f"{fgreen}INFO : création Matrice TFxIDF{rall}")
 
-		vectProb = self.__mat_TFxIDF.dot(vectEnter)
+		if testUnitaire:
+			# Ancien
+			vectProb = self.__mat_TFxIDF.dot(vectEnter)
+		else:
+			# Ajour racinisation
+			vectProb = self.__mat_TFxIDF_SN.dot(vectEnter)
 
 		iddoc = list(range(0, ndoc))
 
