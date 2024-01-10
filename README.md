@@ -5,6 +5,11 @@
 Projet python pour le premier semestre de M1 Informatique Lyon 2 pour l'UE de Python Avancé.
 * Pour executer l'interface, utiliser le programme `interfaceDash.py` (attention, la console indiquera le lien pour accéder à l'interface)
 
+## Informations diverses
+
+Le scraping de documents wikipedia est plus long que les autres. 
+Avec une connexion moyenne, cela peut prendre un peu de temps.
+
 ## Packages nécessaires
 
 Pour que notre programme s'éxécute correctement, nous avons besoin des packages suivants : 
@@ -20,6 +25,7 @@ Pour que notre programme s'éxécute correctement, nous avons besoin des package
 * wordcloud [`pip install wordcloud`]
 * plotly [`pip install plotly`]
 * nltk [`pip install nltk`] (il est possible que le package vous demande de download certaine élément qu'il a besoin avec la méthode download de nltk)
+* wikipedia [`pip install wikipedia`]
 * Enfin, divers packages souvent déjà installés dans python (vérifier et les installer si nécessaire) :
   * `os`, `pickle`, `urllib`, `re`, `unittest`
 
