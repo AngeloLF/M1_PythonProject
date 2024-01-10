@@ -1,5 +1,5 @@
 from dash import dcc, html, dash_table
-from class_PAP import ScrapingGeneral
+from ScrapingGeneral import ScrapingGeneral
 import os
 from color_console.coloramaALF import *
 import pandas as pd
@@ -38,8 +38,6 @@ class htmlEvent():
 
 		df = pd.DataFrame.from_dict({'Aled':['Oskour'], 'mots':[0]})
 		self.fig = px.histogram(df, x="mots")
-
-		print(type(self.fig))
 		
 		# Création d'un objets scrapingGeneral
 		self.sg = ScrapingGeneral()

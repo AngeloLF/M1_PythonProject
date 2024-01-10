@@ -1,5 +1,5 @@
 from dash import Dash, dcc, html, Input, Output, callback, dash_table
-import classDash_serv as DashHtml
+import HtmlEvent
 import plotly.graph_objects as go
 from color_console.coloramaALF import *
 
@@ -15,7 +15,7 @@ callInput = [Input(component_id="input1", component_property="value"),       # v
 	  		 Input(component_id="interv", component_property="n_intervals")] # vals[9]
 callOutput = [Output(component_id="division", component_property="children"), Output("graph1", "figure")]
 
-htmlClass = DashHtml.htmlEvent()
+htmlClass = HtmlEvent.htmlEvent()
 
 
 app = Dash(__name__, external_stylesheets=["css/all.css"])
@@ -74,7 +74,7 @@ def chargedMake_Event(*vals):
 		# Bouton Créer (un nouveau corpus)
 		if vals[5] == 1:
 			# Si le dernier n'es pas la fin de création d'un corpus
-			if htmlClass.div[-1].children != "Corpus sauvegardé !":
+			if htmlClass.div[-1].children != "Corpus sauvegardé !" and htmlClass.div[-1].children != "Corpus non sauvegardé (Pas de documents)":
 				# Si la query n'est pas vide : 
 				if vals[0] != '':
 
@@ -109,20 +109,26 @@ def chargedMake_Event(*vals):
 
 			htmlClass.div.pop(-1)
 
+			sommedoc = 0
+
 			for key, val in infoScraping.items():
 				nb, msg = val
+				sommedoc += nb
 				if msg is None:
 					htmlClass.div.append(html.P(f"Nombre de document {key} récupéré(s) : {nb}", style={'color':'#00dd00'}))
 				else:
 					htmlClass.div.append(html.P(f"Pour {key} : {msg}", style={'color':'#dd0000'}))
 
 			htmlClass.sg.save()
-			htmlClass.div.append(html.P(f"Corpus sauvegardé !", style={'font-weight': 'bold', 'color':'#00dd00'}))
+			if sommedoc >0 :
+				htmlClass.div.append(html.P(f"Corpus sauvegardé !", style={'font-weight': 'bold', 'color':'#00dd00'}))
+			else:
+				htmlClass.div.append(html.P(f"Corpus non sauvegardé (Pas de documents)", style={'font-weight': 'bold', 'color':'#dd0000'}))
 
 		# Garder un callback actif le temps du scraping (obligatoire pour le rafraichissement automatique de la page)
 		if vals[9] > 101:
 			print(f"{flblue}INFO : Scrap en cours...{rall}")
-			if htmlClass.div[-1].children != "Corpus sauvegardé !":
+			if htmlClass.div[-1].children != "Corpus sauvegardé !" and htmlClass.div[-1].children != "Corpus non sauvegardé (Pas de documents)":
 
 				# Pour faire clignoter les '...' sur l'interface
 				if htmlClass.value['input1'] in htmlClass.div[-1].children:

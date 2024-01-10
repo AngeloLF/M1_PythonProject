@@ -222,33 +222,38 @@ class ScrapingGeneral():
 
 		newinfo = f"{self.corpus.get_nom()}-{nbDocs}-{nbAuthor}-{sizeTotal} mots-{nbArxiv}-{nbReddit}"
 
-		if fileinfo not in os.listdir(f"./{self.datafolder}"):
-			lines = [f"Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit", newinfo]
+		if nbDocs > 0:
+
+			if fileinfo not in os.listdir(f"./{self.datafolder}"):
+				lines = [f"Nom du corpus-Nombre de documents-Nombre d'auteurs-Taille total-Docs Arxiv-Docs Reddit", newinfo]
+
+			else:
+				with open(f"./{self.datafolder}{fileinfo}", 'r') as f:
+					lines = f.read().split('\n')
+
+					saving = False
+
+					for i, line in enumerate(lines):
+						if self.corpus.get_nom() in line:
+							lines[i] = newinfo
+							saving = True
+							print(f"{fgreen}INFO : update {fileinfo} for corpus {self.corpus.get_nom()}{rall}")
+
+					if not saving:
+						lines.append(newinfo)
+						print(f"{fgreen}INFO : add corpus {self.corpus.get_nom()} on {fileinfo}{rall}")
+
+			with open(f"./{self.datafolder}{fileinfo}", 'w') as f:
+				f.write('\n'.join(lines))
+				f.close()
+
+			with open(name, 'wb') as f:
+				pickle.dump(self.corpus, f)
+
+			print(f"{fgreen}INFO : Sucess to save corpus '{self.corpus.get_nom()}'{rall}")
 
 		else:
-			with open(f"./{self.datafolder}{fileinfo}", 'r') as f:
-				lines = f.read().split('\n')
-
-				saving = False
-
-				for i, line in enumerate(lines):
-					if self.corpus.get_nom() in line:
-						lines[i] = newinfo
-						saving = True
-						print(f"{fgreen}INFO : update {fileinfo} for corpus {self.corpus.get_nom()}{rall}")
-
-				if not saving:
-					lines.append(newinfo)
-					print(f"{fgreen}INFO : add corpus {self.corpus.get_nom()} on {fileinfo}{rall}")
-
-		with open(f"./{self.datafolder}{fileinfo}", 'w') as f:
-			f.write('\n'.join(lines))
-			f.close()
-
-		with open(name, 'wb') as f:
-			pickle.dump(self.corpus, f)
-
-		print(f"{fgreen}INFO : Sucess to save corpus '{self.corpus.get_nom()}'{rall}")
+			print(f"{fyellow}INFO : Pas de sauvegarde pour '{self.corpus.get_nom()}' (Ne contient pas de document){rall}")
 
 
 
