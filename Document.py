@@ -1,6 +1,10 @@
 import datetime
 import re
 
+# Ajout racinisation
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
 
 
 class Document():
@@ -21,6 +25,7 @@ class Document():
 		__url [str]                : url source du document
 		__texte [str]              : contenu textuel du document
 		__voca [dict]              : dictionnaire qui associe les mots du texte (qui sont les keys) avec les occurrences dans le document (pour les values)
+		__vocasn [dict]            : identique a __voca mais avec racinisation des mots
 		__type [str]               : type, plus précise pour les classes filles
 		__size [list]              : liste contenant 3 int [<nombre caracs>, <nombre mots>, <nombre phrases>] dans le doc
 
@@ -32,6 +37,7 @@ class Document():
 		get_texte()  | set_texte(texte)
 		get_size()   | *
 		get_voca()   | set_statsMots()
+		get_vacosn() | set_statsMots()
 
 	Methodes :
 		info()              : Permet d'afficher des infos sur le document
@@ -67,6 +73,8 @@ class Document():
 		return self.__texte
 	def get_voca(self):
 		return self.__voca
+	def get_vocasn(self): # Ajout racinisation
+		return self.__vocasn
 	def get_size(self): 
 		return self.__size
 	# Les setters :
@@ -107,6 +115,20 @@ class Document():
 		for m in mots : 
 			voca[m] = aio.count(m)
 		self.__voca = voca
+
+		# Ajout racinisation
+		stemmer = SnowballStemmer(language='english')
+		data0 = re.sub(r'[^\w\s]', ' ', self.__texte.lower()) # On laisse que les carac alphanum
+		tokens = [stemmer.stem(token) for token in word_tokenize(data0) if token not in stopwords.words('english') and len(token) > 1]
+		motsSN, vocaSN = list(set(tokens)), {}
+		motsSN.sort()
+		for m in motsSN : 
+			vocaSN[m] = tokens.count(m)
+		self.__vocasn = vocaSN
+
+	    
+
+
 
 
 	def nettoyerTexte(self, text):
